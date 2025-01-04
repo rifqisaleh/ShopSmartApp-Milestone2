@@ -1,4 +1,4 @@
-// import Input from './assets/pages/loginForm'
+import Input from './assets/pages/loginForm'
 import Header from './assets/components/header';
 import Register from './assets/pages/registerForm'
 // import { useState } from 'react'
@@ -14,7 +14,7 @@ function App() {
 
   return (
     <>
-    {/* <Input /> */}
+    <Input />
     <Header />
     <Register />
       {/* <div>
