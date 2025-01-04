@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CategoryFilter from '../components/CategoryFilter';
+import ProductCard from '../components/ProductCard';
 
 interface Category {
   id: string;
@@ -7,11 +8,11 @@ interface Category {
   image: string;
 }
 
-interface Product {
+export interface Product {
   id: string;
   title: string;
   price: number;
-  image: string;
+  images: string[];
   category: Category;
 }
 
@@ -27,12 +28,27 @@ const ProductList: React.FC = () => {
         :"https://api.escuelajs.co/api/v1/products";
         const response = await fetch (url);
         const data = await response.json();
-        console.log("Product data:", data); // Debug: check the structure of products
-        setProducts(data);
-      } catch (error) {
-        console.error("Error Fetching Products:", error);
-      }
-    };
+        
+        //filter out "Hyderabad" and broken image array
+        const filteredProducts = data.filter((product : Product) => {
+          const validImage = Array.isArray(product.images) && product.images.every((image) => {
+            return (
+              image.startsWith ("http") &&
+              !image.includes("\\")
+            );
+          });
+          
+          return (
+            !product.title.includes("Hyderabad") && validImage
+      );
+    });
+      
+    setProducts(filteredProducts);
+
+    } catch (error) {
+    console.error("Error Fetching Products:", error);
+  }
+};
 
     fetchProducts();
   }, [categoryId]);
@@ -44,17 +60,14 @@ const ProductList: React.FC = () => {
 
 {/* Render the Product List */}
 
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {products.map((product) => (
-        <div key={product.id}>
-          <h2>{product.title}</h2>
-          <h3>{product.category.name}</h3> {/* Render category name */}
-          <p>${product.price}</p>
-          <img src={product.image} alt={product.title} />
-          <img src={product.category.image} alt={product.category.name} /> {/* Optional: category image */}
-        </div>
+        <ProductCard key={product.id} product={product} />
       ))}
     </div>
+  </div>
   );
 };
 
 export default ProductList;
+
