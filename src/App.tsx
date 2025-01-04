@@ -1,9 +1,13 @@
 // import Input from './assets/pages/loginForm'
+import Header from './assets/components/header';
 import Register from './assets/pages/registerForm'
 // import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
-import './index.css'
+import Footer from './assets/components/footer';
+import '/src/index.css'; // Absolute path (works in Vite)
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -11,7 +15,7 @@ function App() {
   return (
     <>
     {/* <Input /> */}
-
+    <Header />
     <Register />
       {/* <div>
         <a href="https://vite.dev" target="_blank">
@@ -33,6 +37,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p> */}
+      <Footer />
     </>
   )
 }
