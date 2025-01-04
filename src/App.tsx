@@ -1,6 +1,7 @@
-import Input from './assets/pages/loginForm'
+import Input from './assets/pages/loginForm';
 import Header from './assets/components/header';
-import Register from './assets/pages/registerForm'
+import Register from './assets/pages/registerForm';
+import ProductList from './assets/pages/productList';
 // import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
@@ -17,6 +18,7 @@ function App() {
     <Input />
     <Header />
     <Register />
+    <ProductList />
       {/* <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
