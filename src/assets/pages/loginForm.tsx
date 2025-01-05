@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: 'asdfk@revou.com',
-    password: '12345678',
+    email: "asdfk@revou.com",
+    password: "12345678",
   });
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate(); // For navigation
 
   // Handle changes in input fields
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,11 +19,45 @@ const Login = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    alert('Henlo, Muach');
-  };
+    setError(null); // Clear previous error messages
 
+    try {
+      // Make API request
+      const response = await fetch(
+        "https://api.escuelajs.co/api/v1/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData), // Send email and password
+        }
+      );
+
+      if (!response.ok) {
+        // Handle errors
+        throw new Error("Invalid credentials. Please try again.");
+      }
+
+      const data = await response.json();
+
+      // Store the access token in localStorage
+      localStorage.setItem("access_token", data.access_token);
+
+      // Navigate to the dashboard upon successful login
+      navigate("/dashboard");
+    } catch (err) {
+      // Handle errors and show message to the user
+      if (err instanceof Error) {
+        setError(err.message); // Display the error message to the user
+      } else {
+        setError("An unexpected error occurred.");
+      }
+    }
+  };
+  
   return (
     <div className="bg-gray-100 flex items-center justify-center min-h-screen">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
@@ -30,6 +67,9 @@ const Login = () => {
         <p className="text-sm text-gray-600 text-center mt-2">
           Login to your account
         </p>
+
+        {/* Display Error Message */}
+        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           {/* Email Input */}
@@ -88,7 +128,7 @@ const Login = () => {
         </form>
 
         <p className="text-center text-sm text-gray-500 mt-4">
-          Don&apos;t have an account?{' '}
+          Don&apos;t have an account?{" "}
           <a href="/register" className="text-blue-500 hover:underline">
             Sign up
           </a>
