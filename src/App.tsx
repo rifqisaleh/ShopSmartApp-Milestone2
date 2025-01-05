@@ -1,11 +1,12 @@
 //import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./assets/components/layout";
+// import Header from "./assets/components/header";
+// import Footer from "./assets/components/footer";
 import Input from "./assets/pages/loginForm";
 import Register from "./assets/pages/registerForm";
 import ProductList from "./assets/pages/productList";
 import ProductDetail from "./assets/pages/ProductDetail";
-import Header from "./assets/components/header";
-import Footer from "./assets/components/footer";
 import Dashboard from "./assets/pages/Dashboard"; // Import the Dashboard component
 import ProtectedRoute from "./assets/components/ProtectedRoute"; // Import the ProtectedRoute wrapper
 
@@ -13,53 +14,43 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <>
-        <Header />
+      <Layout>
         <ProductList />
-        <Footer />
-      </>
+      </Layout>
     ),
   },
   {
     path: "/login",
     element: (
-      <>
-        <Header />
+      <Layout>
         <Input />
-        <Footer />
-      </>
+      </Layout>
     ),
   },
   {
     path: "/register",
     element: (
-      <>
-        <Header />
+      <Layout>
         <Register />
-        <Footer />
-      </>
+      </Layout>
     ),
   },
   {
     path: "/product/:id",
     element: (
-      <>
-        <Header />
+      <Layout>
         <ProductDetail />
-        <Footer />
-      </>
+      </Layout>
     ),
   },
   {
     path: "/dashboard",
     element: (
-      <>
-        <Header />
+      <Layout>
         <ProtectedRoute>
           <Dashboard />
         </ProtectedRoute>
-        <Footer />
-      </>
+      </Layout>
     ),
   },
 ]);

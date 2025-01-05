@@ -1,90 +1,70 @@
 import React from "react";
-import '/src/index.css'; // Absolute path (works in Vite)
-
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFacebook, faTwitter, faInstagram, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 
 const Footer: React.FC = () => {
   return (
-    <footer style={{ backgroundColor: "#222", color: "#fff", padding: "2rem" }}>
-      <section className="footercontainer" style={{ display: "flex", justifyContent: "space-between" }}>
-        <div className="footer-content">
-          <h3 style={{ color: "white", fontSize: "1.5rem" }}>Contact Us</h3>
+    <footer className="bg-gray-900 text-white py-8">
+      <section className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8">
+        {/* Contact Us Section */}
+        <div>
+          <h3 className="text-lg font-bold mb-4">Contact Us</h3>
+          <p>Email: <span className="text-gray-400">aeroindahfc@aero.com</span></p>
+          <p>Phone: <span className="text-gray-400">+62812309876</span></p>
           <p>
-            Email: <i style={{ fontSize: "1rem", color: "rgb(53, 51, 51)" }}>aeroindahfc@aero.com</i>
-          </p>
-          <p>
-            Phone: <i style={{ fontSize: "1rem", color: "rgb(53, 51, 51)" }}>+62812309876</i>
-          </p>
-          <p>
-            Address:{" "}
-            <i style={{ fontSize: "1rem", color: "rgb(53, 51, 51)" }}>
-              Pondok Cabe Airport
-              <br />
-              Jl. Pondok Cabe Raya Tangerang Selatan 15418
-            </i>
+            Address:
+            <span className="text-gray-400">
+              <br /> Pondok Cabe Airport
+              <br /> Jl. Pondok Cabe Raya Tangerang Selatan 15418
+            </span>
           </p>
         </div>
-        <div className="footer-content">
-          <h3 style={{ color: "white", fontSize: "1.5rem" }}>Quick Links</h3>
-          <ul className="list" style={{ listStyle: "none", padding: 0 }}>
+
+        {/* Quick Links Section */}
+        <div>
+          <h3 className="text-lg font-bold mb-4">Quick Links</h3>
+          <ul className="space-y-2">
             <li>
-              <a href="#index.html" style={{ textDecoration: "none", color: "white" }}>
-                Home
-              </a>
+              <a href="#index.html" className="hover:underline text-gray-400">Home</a>
             </li>
             <li>
-              <a href="#ourservices" style={{ textDecoration: "none", color: "white" }}>
-                Our Services
-              </a>
+              <a href="#ourservices" className="hover:underline text-gray-400">Our Services</a>
             </li>
             <li>
-              <a href="#fleet" style={{ textDecoration: "none", color: "white" }}>
-                Our Fleet
-              </a>
+              <a href="#fleet" className="hover:underline text-gray-400">Our Fleet</a>
             </li>
             <li>
-              <a href="#ourmissions" style={{ textDecoration: "none", color: "white" }}>
-                Our Mission
-              </a>
+              <a href="#ourmissions" className="hover:underline text-gray-400">Our Mission</a>
             </li>
             <li>
-              <a href="#team" style={{ textDecoration: "none", color: "white" }}>
-                Our Team
-              </a>
+              <a href="#team" className="hover:underline text-gray-400">Our Team</a>
             </li>
           </ul>
         </div>
-        <div className="footer-content">
-          <h3 style={{ color: "white", fontSize: "1.5rem" }}>Follow Us</h3>
-          <ul
-            className="social-icons"
-            style={{ listStyle: "none", padding: 0, display: "flex", gap: "1rem" }}
-          >
-            <li>
-              <a href="#">
-                <i className="fa-brands fa-facebook" style={{ color: "rgb(3, 3, 3)" }}> </i>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i className="fa-brands fa-instagram" style={{ color: "rgb(3, 3, 3)" }}> </i>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i className="fa-brands fa-twitter" style={{ color: "rgb(3, 3, 3)" }}> </i>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i className="fa-brands fa-linkedin" style={{ color: "rgb(3, 3, 3)" }}> </i>
-              </a>
-            </li>
-          </ul>
+
+        {/* Social Icons Section */}
+        <div>
+          <h3 className="text-lg font-bold mb-4">Follow Us</h3>
+          <div className="flex space-x-4">
+            <a href="#" className="text-gray-400 hover:text-blue-500">
+              <FontAwesomeIcon icon={faFacebook} size="2x" />
+            </a>
+            <a href="#" className="text-gray-400 hover:text-pink-500">
+              <FontAwesomeIcon icon={faInstagram} size="2x" />
+            </a>
+            <a href="#" className="text-gray-400 hover:text-blue-400">
+              <FontAwesomeIcon icon={faTwitter} size="2x" />
+            </a>
+            <a href="#" className="text-gray-400 hover:text-blue-700">
+              <FontAwesomeIcon icon={faLinkedin} size="2x" />
+            </a>
+          </div>
         </div>
       </section>
-      <div className="bottom-bar" style={{ textAlign: "center", marginTop: "2rem" }}>
-        <p>©2025 ShopSmartApp. All Rights Reserved</p>
+
+      {/* Bottom Bar */}
+      <div className="text-center mt-8">
+        <p className="text-gray-500">©2025 ShopSmartApp. All Rights Reserved</p>
       </div>
     </footer>
   );

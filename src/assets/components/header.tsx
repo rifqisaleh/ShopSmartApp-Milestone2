@@ -25,17 +25,17 @@ const Header: React.FC = () => {
         <ul className="flex space-x-4">
           <li>
             <Link to="/" className="hover:underline">
-              Home
+            HOME
             </Link>
           </li>
           <li>
             <Link to="/#ourservices" className="hover:underline">
-              Our Services
+              SHOP
             </Link>
           </li>
           <li>
             <Link to="/#paragraph2" className="hover:underline">
-              Contact Us
+           CART
             </Link>
           </li>
         </ul>
