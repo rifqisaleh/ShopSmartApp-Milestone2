@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "asdfk@revou.com",
-    password: "12345678",
+    email: "",
+    password: "",
   });
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate(); // For navigation
@@ -68,50 +68,47 @@ const Login = () => {
           Login to your account
         </p>
 
-        {/* Display Error Message */}
         {error && <p className="text-red-500 text-center mt-2">{error}</p>}
 
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
           {/* Email Input */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
+          <div className="relative">
             <input
               type="email"
               id="email"
               name="email"
-              placeholder="Enter your email"
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm 
-                         focus:ring-blue-500 focus:border-blue-500"
               required
               value={formData.email}
               onChange={handleChange}
+              placeholder="Email"
+              className="peer w-full p-2 border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
             />
+            <label
+              htmlFor="email"
+              className="absolute left-2 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-500"
+            >
+              Email
+            </label>
           </div>
 
           {/* Password Input */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
+          <div className="relative">
             <input
               type="password"
               id="password"
               name="password"
-              placeholder="Enter your password"
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm 
-                         focus:ring-blue-500 focus:border-blue-500"
               required
               value={formData.password}
               onChange={handleChange}
+              placeholder="Password"
+              className="peer w-full p-2 border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
             />
+            <label
+              htmlFor="password"
+              className="absolute left-2 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-500"
+            >
+              Password
+            </label>
           </div>
 
           {/* Submit Button */}
