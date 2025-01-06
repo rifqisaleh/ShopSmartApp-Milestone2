@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const {login} = useAuth();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -34,10 +36,8 @@ const Login = () => {
         throw new Error("Invalid credentials. Please try again.");
       }
 
-      const data = await response.json();
-    
-
-      localStorage.setItem("access_token", data.access_token);
+    const data = await response.json();
+      login(data.access_token); 
       navigate("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
