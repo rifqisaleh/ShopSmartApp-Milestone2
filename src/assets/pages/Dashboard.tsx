@@ -38,8 +38,12 @@ const Dashboard: React.FC = () => {
         }
 
         const data = await response.json();
+
+       
+
         setProfile(data);
       } catch (err) {
+        console.log("Login failed:", err); // Log the error
         setError(err instanceof Error ? err.message : "Unexpected error.");
         logout(); // Clear the token using useAuth
         navigate("/login");
@@ -48,6 +52,8 @@ const Dashboard: React.FC = () => {
 
     fetchProfile();
   }, [logout, navigate]);
+
+ 
 
   const handleLogout = () => {
     logout(); // Call the logout function from useAuth

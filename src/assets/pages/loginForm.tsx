@@ -2,14 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
 
-  // Handle changes in input fields
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -18,13 +14,11 @@ const Login = () => {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setError(null); // Clear previous error messages
+    setError(null);
 
     try {
-      // Make API request
       const response = await fetch(
         "https://api.escuelajs.co/api/v1/auth/login",
         {
@@ -32,77 +26,71 @@ const Login = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData), // Send email and password
+          body: JSON.stringify(formData),
         }
       );
 
       if (!response.ok) {
-        // Handle errors
         throw new Error("Invalid credentials. Please try again.");
       }
 
       const data = await response.json();
+      console.log("Login successful:", data);
 
-      // Store the access token in localStorage
       localStorage.setItem("access_token", data.access_token);
-
-      // Navigate to the dashboard upon successful login
       navigate("/dashboard");
     } catch (err) {
-      // Handle errors and show message to the user
-      if (err instanceof Error) {
-        setError(err.message); // Display the error message to the user
-      } else {
-        setError("An unexpected error occurred.");
-      }
+      console.error("Login error:", err);
+      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     }
   };
-  
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-blue-500">Welcome to ShopSmart</h2>
-        <p className="text-sm text-gray-600 text-center mt-2">Login to your account</p>
+        <h2 className="text-2xl font-bold text-center text-blue-500">
+          Welcome to ShopSmart
+        </h2>
+        <p className="text-sm text-gray-600 text-center mt-2">
+          Login to your account
+        </p>
 
         {error && <p className="text-red-500 text-center mt-2">{error}</p>}
 
-        <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
-          <div className="relative">
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+          {/* Email Input */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Email"
               required
-              className="peer w-full p-2 border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
-            <label
-              htmlFor="email"
-              className="absolute left-2 top-2 text-sm text-gray-500 transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-500"
-            >
-              Email
-            </label>
           </div>
-          <div className="relative">
+
+          {/* Password Input */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
             <input
               type="password"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Password"
               required
-              className="peer w-full p-2 border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
-            <label
-              htmlFor="password"
-              className="absolute left-2 top-2 text-sm text-gray-500 transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-500"
-            >
-              Password
-            </label>
           </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 focus:outline-none"
@@ -110,6 +98,7 @@ const Login = () => {
             Login
           </button>
         </form>
+
         <p className="text-center text-sm text-gray-500 mt-4">
           Don't have an account?{" "}
           <a href="/register" className="text-blue-500 hover:underline">
@@ -122,3 +111,4 @@ const Login = () => {
 };
 
 export default Login;
+
