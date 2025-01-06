@@ -6,7 +6,8 @@ import ProductList from "./assets/pages/productList";
 import ProductDetail from "./assets/pages/ProductDetail";
 import Dashboard from "./assets/pages/Dashboard"; // Import the Dashboard component
 import ProtectedRoute from "./assets/components/ProtectedRoute"; // Import the ProtectedRoute wrapper
-import ShoppingCart from "./assets/pages/cart";
+import ShoppingCart from "./assets/pages/shoppingCart";// Adjusted import path
+import CartProvider from "./assets/components/cart";
 
 const router = createBrowserRouter([
   {
@@ -53,18 +54,28 @@ const router = createBrowserRouter([
   },
   {
     path: "/cart",
-   
-      element: (
-        <Layout>
-          {console.log("Cart route reached!")}
-          <ShoppingCart />
-        </Layout>
-      ),
+    element: (
+      <Layout>
+        <ShoppingCart />
+      </Layout>
+    ),
+  },
+  {
+    path: "*", // Fallback route for 404
+    element: (
+      <Layout>
+        <h1>Page Not Found</h1>
+      </Layout>
+    ),
   },
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <CartProvider>
+      <RouterProvider router={router} />
+    </CartProvider>
+  );
 }
 
 export default App;

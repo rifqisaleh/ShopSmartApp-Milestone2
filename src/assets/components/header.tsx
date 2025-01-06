@@ -1,15 +1,23 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext"; // Adjust path as needed
+import { useAuth } from "../auth/AuthContext";
+import { CartContext } from "./cart";
 
 const Header: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const cartContext = useContext(CartContext);
 
   const handleLogout = () => {
     logout(); // Call logout from AuthContext
     navigate("/"); // Redirect to the home page
   };
+
+  if (!cartContext) {
+    return null; // Ensure the header renders only when the CartContext is available
+  }
+
+  const { cartCount } = cartContext;
 
   return (
     <header className="bg-blue-500 text-white p-4 flex justify-between items-center">
@@ -25,7 +33,7 @@ const Header: React.FC = () => {
         <ul className="flex space-x-4">
           <li>
             <Link to="/landingPage" className="hover:underline">
-            HOME
+              HOME
             </Link>
           </li>
           <li>
@@ -34,8 +42,13 @@ const Header: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link to="/cart" className="hover:underline">
-           CART
+            <Link to="/cart" className="hover:underline relative">
+              CART
+              {cartCount > 0 && (
+                <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                  {cartCount} items
+                </span>
+              )}
             </Link>
           </li>
         </ul>

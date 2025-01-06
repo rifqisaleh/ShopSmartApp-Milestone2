@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
+import { CartContext } from "../components/cart";
 
 interface Product {
   id: number;
   title: string;
   description: string;
   price: number;
-  images: string[]; // Corrected type to match the API
+  images: string[];
 }
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Get product ID from URL
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const cartContext = useContext(CartContext);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -23,9 +25,9 @@ const ProductDetail: React.FC = () => {
         }
         const data: Product = await response.json();
         setProduct(data);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching product details:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -34,13 +36,22 @@ const ProductDetail: React.FC = () => {
   }, [id]);
 
   if (loading) return <p>Loading...</p>;
-
   if (!product) return <p>Product not found!</p>;
+
+  const handleAddToCart = () => {
+    if (cartContext && product) {
+      cartContext.addToCart({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+      });
+    }
+  };
 
   return (
     <div className="p-4">
       <img
-        src={product.images[0]} // Access the first image
+        src={product.images?.[0] || "https://via.placeholder.com/150"}
         alt={product.title}
         className="w-full max-w-md mx-auto mb-4"
       />
@@ -49,7 +60,10 @@ const ProductDetail: React.FC = () => {
       <p className="text-lg font-semibold mb-4">
         {product.price ? `$${product.price.toFixed(2)}` : "Price unavailable"}
       </p>
-      <button className="bg-blue-500 text-white px-4 py-2 rounded">
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+        onClick={handleAddToCart}
+      >
         Add to Cart
       </button>
     </div>
