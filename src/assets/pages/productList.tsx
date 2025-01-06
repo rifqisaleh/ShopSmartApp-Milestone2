@@ -1,73 +1,72 @@
-import React, { useState, useEffect } from 'react';
-import CategoryFilter from '../components/CategoryFilter';
-import ProductCard from '../components/ProductCard';
-
-interface Category {
-  id: string;
-  name: string;
-  image: string;
-}
+import React, { useState, useEffect } from "react";
+import ProductCard from "../components/ProductCard";
+import CategoryFilter from "../components/CategoryFilter";
 
 export interface Product {
-  id: string;
+  id: number;
   title: string;
   price: number;
-  images: string[];
-  category: Category;
+  images: string | string[];
+  description?: string;
+  category?: {
+    id: string;
+    name: string;
+  };
 }
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const url = categoryId
-        ?`https://api.escuelajs.co/api/v1/products/?categoryId=${categoryId}`
-        :"https://api.escuelajs.co/api/v1/products";
-        const response = await fetch (url);
-        const data = await response.json();
-        
-        //filter out "Hyderabad" and broken image array
-        const filteredProducts = data.filter((product : Product) => {
-          const validImage = Array.isArray(product.images) && product.images.every((image) => {
-            return (
-              image.startsWith ("http") &&
-              !image.includes("\\")
-            );
-          });
-          
-          return (
-            !product.title.includes("Hyderabad") && validImage
-      );
-    });
-      
-    setProducts(filteredProducts);
+          ? `https://api.escuelajs.co/api/v1/products/?categoryId=${categoryId}`
+          : "https://api.escuelajs.co/api/v1/products";
+        console.log("Fetching from URL:", url);
 
-    } catch (error) {
-    console.error("Error Fetching Products:", error);
-  }
-};
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data: Product[] = await response.json();
+        console.log("Updated API Response:", data);
+
+        const filteredProducts = data.filter((product) => {
+          const hasValidImage =
+            Array.isArray(product.images)
+              ? product.images.length > 0
+              : typeof product.images === "string" && product.images.length > 0;
+          return hasValidImage;
+        });
+
+        setProducts(filteredProducts);
+      } catch (error) {
+        console.error("Error Fetching Products:", error);
+        setError("Failed to load products. Please try again later.");
+      }
+    };
 
     fetchProducts();
   }, [categoryId]);
 
+  if (error) {
+    return <p>{error}</p>;
+  }
+
   return (
     <div>
-       {/* Render the CategoryFilter */}
-       <CategoryFilter onCategoryChange={setCategoryId} />
-
-{/* Render the Product List */}
-
-<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
+      <CategoryFilter onCategoryChange={setCategoryId} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
     </div>
-  </div>
   );
 };
 
 export default ProductList;
-

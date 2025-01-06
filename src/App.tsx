@@ -8,6 +8,8 @@ import Dashboard from "./assets/pages/Dashboard"; // Import the Dashboard compon
 import ProtectedRoute from "./assets/components/ProtectedRoute"; // Import the ProtectedRoute wrapper
 import ShoppingCart from "./assets/pages/shoppingCart";// Adjusted import path
 import CartProvider from "./assets/components/cart";
+import { AuthProvider } from "./assets/auth/AuthContext";
+import LandingPage from "./assets/pages/LandingPages";
 
 const router = createBrowserRouter([
   {
@@ -68,13 +70,23 @@ const router = createBrowserRouter([
       </Layout>
     ),
   },
+  {
+    path: "/landingPage",
+    element: (
+      <Layout>
+        <LandingPage />
+      </Layout>
+    ),
+  },
 ]);
 
 function App() {
   return (
-    <CartProvider>
-      <RouterProvider router={router} />
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

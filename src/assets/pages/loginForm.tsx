@@ -35,7 +35,7 @@ const Login = () => {
       }
 
       const data = await response.json();
-      console.log("Login successful:", data);
+    
 
       localStorage.setItem("access_token", data.access_token);
       navigate("/dashboard");

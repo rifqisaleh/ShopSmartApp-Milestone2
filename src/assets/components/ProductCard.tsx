@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import { Product } from "../pages/productList"; // Use the imported Product interface
+import { Product } from "../pages/productList"; 
 import { Link } from "react-router-dom";
 import { CartContext } from "./cart";
 
@@ -13,7 +13,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 
   return (
     <div className="border rounded-lg p-4 shadow-md bg-white">
-      {/* Wrap the entire card with a Link */}
+      
       <Link to={`/product/${product.id}`}>
         <img
           src={imageUrl}

@@ -8,6 +8,8 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const cartContext = useContext(CartContext);
 
+  console.log("Is Authenticated:", isAuthenticated);
+
   const handleLogout = () => {
     logout(); // Call logout from AuthContext
     navigate("/"); // Redirect to the home page
@@ -37,7 +39,7 @@ const Header: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link to="/#ourservices" className="hover:underline">
+            <Link to="/" className="hover:underline">
               SHOP
             </Link>
           </li>
