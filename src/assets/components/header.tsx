@@ -24,7 +24,7 @@ const Header: React.FC = () => {
       <nav>
         <ul className="flex space-x-4">
           <li>
-            <Link to="/" className="hover:underline">
+            <Link to="/landingPage" className="hover:underline">
             HOME
             </Link>
           </li>
@@ -34,7 +34,7 @@ const Header: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link to="/#paragraph2" className="hover:underline">
+            <Link to="/cart" className="hover:underline">
            CART
             </Link>
           </li>

@@ -1,14 +1,12 @@
-//import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./assets/components/layout";
-// import Header from "./assets/components/header";
-// import Footer from "./assets/components/footer";
 import Input from "./assets/pages/loginForm";
 import Register from "./assets/pages/registerForm";
 import ProductList from "./assets/pages/productList";
 import ProductDetail from "./assets/pages/ProductDetail";
 import Dashboard from "./assets/pages/Dashboard"; // Import the Dashboard component
 import ProtectedRoute from "./assets/components/ProtectedRoute"; // Import the ProtectedRoute wrapper
+import ShoppingCart from "./assets/pages/cart";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +50,16 @@ const router = createBrowserRouter([
         </ProtectedRoute>
       </Layout>
     ),
+  },
+  {
+    path: "/cart",
+   
+      element: (
+        <Layout>
+          {console.log("Cart route reached!")}
+          <ShoppingCart />
+        </Layout>
+      ),
   },
 ]);
 
