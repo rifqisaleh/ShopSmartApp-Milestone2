@@ -60,6 +60,43 @@ const Dashboard: React.FC = () => {
     navigate("/login");
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      );
+
+      if (!confirmDelete) return;
+
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        throw new Error("Unauthorized");
+      }
+
+      const response = await fetch("https://api.escuelajs.co/api/v1/users/me", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete the account.");
+      }
+
+      alert("Your account has been deleted.");
+      logout(); // Log out the user after account deletion
+      navigate("/"); // Redirect to the home page
+    } catch (err) {
+      console.error("Error deleting account:", err);
+      alert(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while deleting your account."
+      );
+    }
+  };
+
   if (error) {
     return <p className="text-red-500">{error}</p>;
   }
@@ -82,14 +119,25 @@ const Dashboard: React.FC = () => {
             className="w-24 h-24 rounded-full mx-auto mt-4"
           />
         )}
-        <button
-          onClick={handleLogout}
-          className="mt-6 w-full px-4 py-2 bg-red-500 text-white rounded-lg font-medium 
+
+        <div className="mt-6 space-y-4">
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg font-medium 
+                     hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 
+                     focus:ring-offset-1"
+          >
+            Log Out
+          </button>
+          <button
+            onClick={handleDeleteAccount}
+            className="w-full px-4 py-2 bg-red-500 text-white rounded-lg font-medium 
                      hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 
                      focus:ring-offset-1"
-        >
-          Log Out
-        </button>
+          >
+            Delete Account
+          </button>
+        </div>
       </div>
     </div>
   );

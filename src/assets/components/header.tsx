@@ -4,7 +4,7 @@ import { useAuth } from "../auth/AuthContext";
 import { CartContext } from "./cart";
 
 const Header: React.FC = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const cartContext = useContext(CartContext);
 
@@ -13,11 +13,6 @@ const Header: React.FC = () => {
   }
 
   const { cartCount } = cartContext;
-
-  const handleLogout = () => {
-    logout(); // Call logout from AuthContext
-    navigate("/"); // Redirect to the home page
-  };
 
   return (
     <header className="bg-blue-500 text-white p-4 flex justify-between items-center">
@@ -55,13 +50,13 @@ const Header: React.FC = () => {
       </nav>
 
       {/* Authentication Links */}
-      <div>
+      <div className="flex items-center space-x-4">
         {isAuthenticated ? (
           <button
-            onClick={handleLogout}
-            className="bg-red-500 px-4 py-2 rounded hover:bg-red-600 focus:outline-none"
+            onClick={() => navigate("/dashboard")}
+            className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600 focus:outline-none"
           >
-            Log Out
+            Dashboard
           </button>
         ) : (
           <button
