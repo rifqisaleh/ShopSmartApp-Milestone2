@@ -6,7 +6,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem("access_token"); // Check if token exists
+  const isAuthenticated = !!localStorage.getItem("access_token"); 
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
