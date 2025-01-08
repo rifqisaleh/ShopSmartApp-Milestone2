@@ -6,7 +6,7 @@ export interface Product {
   id: number;
   title: string;
   price: number;
-  images: string | string[];
+  images: string[] | string | null;
   description?: string;
   category?: {
     id: string;
@@ -19,12 +19,25 @@ const ProductList: React.FC = () => {
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Function to normalize images from various formats
+  const normalizeImages = (images: string[] | string | null | undefined): string[] => {
+    if (!images) return []; // Handle null or undefined
+    if (Array.isArray(images)) {
+      // Filter valid URLs
+      return images.filter((url) => typeof url === "string" && url.startsWith("http"));
+    }
+  
+    return []; // Return empty array for unsupported types
+  };
+  
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const url = categoryId
           ? `https://api.escuelajs.co/api/v1/products/?categoryId=${categoryId}`
           : "https://api.escuelajs.co/api/v1/products";
+
         console.log("Fetching from URL:", url);
 
         const response = await fetch(url);
@@ -33,17 +46,14 @@ const ProductList: React.FC = () => {
         }
 
         const data: Product[] = await response.json();
-        console.log("Updated API Response:", data);
 
-        const filteredProducts = data.filter((product) => {
-          const hasValidImage =
-            Array.isArray(product.images)
-              ? product.images.length > 0
-              : typeof product.images === "string" && product.images.length > 0;
-          return hasValidImage;
-        });
+        const processedProducts = data.map((product) => ({
+          ...product,
+          images: normalizeImages(product.images), // Normalize images
+        }));
 
-        setProducts(filteredProducts);
+
+        setProducts(processedProducts);
       } catch (error) {
         console.error("Error Fetching Products:", error);
         setError("Failed to load products. Please try again later.");

@@ -29,6 +29,14 @@ const LandingPage: React.FC = () => {
   
     fetchNewestProducts();
   }, []);
+
+  const getFirstImage = (images: string[] | string | null): string | undefined => {
+    if (Array.isArray(images)) {
+      return images.length > 0 ? images[0] : undefined; // Get first image in array
+    }
+    return typeof images === "string" ? images : undefined; // Handle single string or null
+  };
+
   return (
     <div className="flex flex-col items-center p-6">
       <h1 className="text-2xl font-bold mb-4">Welcome to ShopSmart!</h1>
@@ -38,11 +46,7 @@ const LandingPage: React.FC = () => {
       ) : featuredProduct ? (
         <div className="border rounded-lg shadow-lg p-4 max-w-md w-full text-center">
           <img
-            src={
-              Array.isArray(featuredProduct.images)
-                ? featuredProduct.images[0] // Use the first image in the array
-                : featuredProduct.images
-            }
+            src={getFirstImage(featuredProduct.images) || "/placeholder.jpeg"} // Use placeholder if no valid image
             alt={featuredProduct.title}
             className="w-full h-auto rounded mb-4"
           />

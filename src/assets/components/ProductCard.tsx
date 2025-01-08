@@ -22,7 +22,10 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           src={imageUrl}
           alt={product.title}
           className="w-full h-40 object-cover mb-2 rounded"
-          onError={(e) => (e.currentTarget.src = "/placeholder.png")} // Fallback for broken images
+          onError={(e) => {
+            console.error("Image failed to load:", imageUrl);
+            e.currentTarget.src = "/placeholder.jpeg";
+          }} // Fallback for broken URLs
         />
         <h3 className="font-bold text-lg text-gray-800">{product.title}</h3>
       </Link>
