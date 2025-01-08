@@ -1,71 +1,128 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 
 interface FormData {
-    name: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    }
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
+  dob: string;
+}
 
 interface FormErrors {
-    name?: string;
-    email?: string;
-    password?: string;
-    confirmPassword?: string;
-}    
+  name?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  role?: string;
+  dob?: string;
+  general?: string;
+}
 
 const Register = () => {
-    const [formData, setFormData] = useState<FormData> ({
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+    dob: "",
+  });
+
+  const [roles, setRoles] = useState<string[]>(["Customer", "Admin"]); // For dynamic roles
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState<boolean>(false);
+  
+
+  // Fetch roles dynamically (if applicable)
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await fetch("https://api.yourdomain.com/roles");
+        if (!response.ok) {
+          throw new Error("Failed to fetch roles");
+        }
+        const rolesData: string[] = await response.json();
+        setRoles(rolesData);
+      } catch (error) {
+        console.error("Error fetching roles:", error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const validateForm = (): FormErrors => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.name) newErrors.name = "Name is required";
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.password) newErrors.password = "Password is required";
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+    if (!formData.role) newErrors.role = "Role is required";
+    if (!formData.dob) newErrors.dob = "Date of Birth is required";
+
+    return newErrors;
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setErrors({});
+    const newErrors = validateForm();
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("https://api.escuelajs.co/api/v1/users/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to register. Please try again.");
+      }
+
+      alert("Registration successful!");
+      // Reset form after successful registration
+      setFormData({
         name: "",
         email: "",
         password: "",
         confirmPassword: "",
-    });
+        role: "",
+        dob: "",
+      });
+    } catch (err) {
+      console.error("Registration error:", err);
+      if (err instanceof Error) {
+        setErrors({ general: err.message });
+      } else {
+        setErrors({ general: "An unexpected error occurred." });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const [error, setErrors] = useState<FormErrors>({})
-    const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value} = event.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }))
-    };
-
-    const validateForm = (): FormErrors => {
-        const newErrors: FormErrors = {};
-
-        if (!formData.name) newErrors.name = "Name is Required";
-        if (!formData.email) newErrors.email = "Email is Required";
-        if (!formData.password) newErrors.password = "Password is Required";
-        if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = "Passwords do not match";
-          }
-
-          return newErrors;
-        };
-
-    const handleSubmit = (event: React.FormEvent) =>{
-        event.preventDefault();
-       const newErrors = validateForm();
-       if (Object.keys(newErrors).length === 0){
-        console.log ("Form Submitted:", formData);
-        //reset form after submission
-        setFormData({
-            name: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-        });
-       } else {
-        setErrors(newErrors);
-       }
-    };
-
-    return (
-     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Create your account
@@ -76,119 +133,122 @@ const Register = () => {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                 Name
               </label>
               <input
                 id="name"
                 name="name"
                 type="text"
-                autoComplete="name"
-                required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 value={formData.name}
                 onChange={handleChange}
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
-              {error.name && (
-                <p className="mt-2 text-sm text-red-600">{error.name}</p>
-              )}
+              {errors.name && <p className="text-sm text-red-600">{errors.name}</p>}
             </div>
 
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email address
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email
               </label>
               <input
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
-                required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 value={formData.email}
                 onChange={handleChange}
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
-              {error.email && (
-                <p className="mt-2 text-sm text-red-600">{error.email}</p>
-              )}
+              {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  required
-                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </div>
-              {error.password && (
-                <p className="mt-2 text-sm text-red-600">{error.password}</p>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+              {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                Confirm Password
+              </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+              {errors.confirmPassword && (
+                <p className="text-sm text-red-600">{errors.confirmPassword}</p>
               )}
             </div>
 
             <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Confirm Password
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+                Role
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  required
-                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? "Hide" : "Show"}
-                </button>
-              </div>
-              {error.confirmPassword && (
-                <p className="mt-2 text-sm text-red-600">
-                  {error.confirmPassword}
-                </p>
-              )}
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              >
+                <option value="" disabled>
+                  Select a role
+                </option>
+                {roles.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </select>
+              {errors.role && <p className="text-sm text-red-600">{errors.role}</p>}
             </div>
+
+            <div>
+              <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                id="dob"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+              {errors.dob && <p className="text-sm text-red-600">{errors.dob}</p>}
+            </div>
+
+            {errors.general && <p className="text-sm text-red-600">{errors.general}</p>}
 
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                disabled={loading}
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                  loading ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
+                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
               >
-                Register
+                {loading ? "Submitting..." : "Register"}
               </button>
             </div>
           </form>
@@ -197,5 +257,5 @@ const Register = () => {
     </div>
   );
 };
-  
+
 export default Register;

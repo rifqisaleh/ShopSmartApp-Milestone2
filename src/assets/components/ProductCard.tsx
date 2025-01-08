@@ -5,12 +5,15 @@ import { CartContext } from "./cart";
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const imageUrl = product.images && product.images.length > 0 ? product.images[0] : "/placeholder.jpeg";
-  const { addToCart } = useContext(CartContext);
+  const { addToCart } = useContext(CartContext) ||{};
   
   const handleAddToCart = () => {
-    addToCart(product);
+    if (addToCart) {
+      addToCart(product);
+    } else {
+      console.error("CartContext is not available");
+    }
   };
-
   return (
     <div className="border rounded-lg p-4 shadow-md bg-white">
       
