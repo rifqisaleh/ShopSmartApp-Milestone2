@@ -16,29 +16,31 @@ export interface Product {
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [filters, setFilters] = useState<{
+    categoryId: string | null;
+    searchQuery: string;
+    priceRange: [number, number];
+  }>({
+    categoryId: null,
+    searchQuery: "",
+    priceRange: [0, 500],
+  });
   const [error, setError] = useState<string | null>(null);
 
-  // Function to normalize images from various formats
   const normalizeImages = (images: string[] | string | null | undefined): string[] => {
-    if (!images) return []; // Handle null or undefined
+    if (!images) return [];
     if (Array.isArray(images)) {
-      // Filter valid URLs
       return images.filter((url) => typeof url === "string" && url.startsWith("http"));
     }
-  
-    return []; // Return empty array for unsupported types
+    return [];
   };
-  
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const url = categoryId
-          ? `https://api.escuelajs.co/api/v1/products/?categoryId=${categoryId}`
+        const url = filters.categoryId
+          ? `https://api.escuelajs.co/api/v1/products/?categoryId=${filters.categoryId}`
           : "https://api.escuelajs.co/api/v1/products";
-
-        console.log("Fetching from URL:", url);
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -47,11 +49,15 @@ const ProductList: React.FC = () => {
 
         const data: Product[] = await response.json();
 
-        const processedProducts = data.map((product) => ({
-          ...product,
-          images: normalizeImages(product.images), // Normalize images
-        }));
+        // Apply search and price filters
+        const filteredProducts = data
+          .filter((product) => product.title.toLowerCase().includes(filters.searchQuery.toLowerCase()))
+          .filter((product) => product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1]);
 
+        const processedProducts = filteredProducts.map((product) => ({
+          ...product,
+          images: normalizeImages(product.images),
+        }));
 
         setProducts(processedProducts);
       } catch (error) {
@@ -61,7 +67,7 @@ const ProductList: React.FC = () => {
     };
 
     fetchProducts();
-  }, [categoryId]);
+  }, [filters]);
 
   if (error) {
     return <p>{error}</p>;
@@ -69,7 +75,7 @@ const ProductList: React.FC = () => {
 
   return (
     <div>
-      <CategoryFilter onCategoryChange={setCategoryId} />
+      <CategoryFilter onFilterChange={setFilters} />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />

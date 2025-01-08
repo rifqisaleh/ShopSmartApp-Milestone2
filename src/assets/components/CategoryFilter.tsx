@@ -1,94 +1,95 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface Category {
   id: string;
   name: string;
 }
 
-interface Product {
-  id: string;
-  title: string;
-  price: number;
-  image: string;
-  category: {
-    id: string;
-    name: string;
-  };
-}
-
 interface CategoryFilterProps {
-  onCategoryChange: (categoryId: string | null) => void;
+  onFilterChange: (filters: { 
+    categoryId: string | null; 
+    searchQuery: string; 
+    priceRange: [number, number]; 
+  }) => void;
 }
 
-const CategoryFilter: React.FC<CategoryFilterProps> = ({ onCategoryChange }) => {
+const CategoryFilter: React.FC<CategoryFilterProps> = ({ onFilterChange }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
 
- useEffect(() => {
-    const fetchProducts = async () => {
+  useEffect(() => {
+    const fetchCategories = async () => {
       try {
-        const categoryMap: Record<string, string> = {
-          "1": "Clothes",
-          "2": "Electronics",
-          "3": "Furniture",
-          "4": "Shoes",
-          "5": "Miscellaneous", // Fix "Hyderabad"
-        };
-        const response = await fetch("https://api.escuelajs.co/api/v1/products");
-        const data: Product[] = await response.json();
+        const response = await fetch("https://api.escuelajs.co/api/v1/categories");
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
 
-        // Extract unique categories based on ID and map to proper names
-        const uniqueCategories: Category[] = Array.from(
-          new Map(
-            data.map((product) => [
-              product.category.id, // Use category ID as the key
-              {
-                id: product.category.id,
-                name: categoryMap[product.category.id] || "Unknown", // Map ID to name
-              },
-            ])
-          ).values()
-        );
-
-        setCategories(uniqueCategories);
+        const data: Category[] = await response.json();
+        setCategories(data);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching categories:", error);
       }
     };
 
-    fetchProducts();
+    fetchCategories();
   }, []);
 
-  const handleCategoryChange = (categoryId: string | null) => {
-    setSelectedCategory(categoryId);
-    onCategoryChange(categoryId);
-  };
+  useEffect(() => {
+    onFilterChange({ categoryId: selectedCategory, searchQuery, priceRange });
+  }, [selectedCategory, searchQuery, priceRange, onFilterChange]);
 
   return (
-    <div className="flex flex-wrap space-x-2">
-      <button
-        className={`px-4 py-2 rounded ${
-          selectedCategory === null ? "bg-blue-500 text-white" : "bg-gray-200"
-        }`}
-        onClick={() => handleCategoryChange(null)}
-      >
-        All
-      </button>
-      {categories.length > 0 ? (
-        categories.map((category) => (
+    <div className="space-y-4">
+      {/* Search Bar */}
+      <div>
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-4 py-2 border rounded-md"
+        />
+      </div>
+
+      {/* Category Buttons */}
+      <div className="flex flex-wrap space-x-2">
+        <button
+          className={`px-4 py-2 rounded ${!selectedCategory ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+          onClick={() => setSelectedCategory(null)}
+        >
+          All
+        </button>
+        {categories.map((category) => (
           <button
             key={category.id}
             className={`px-4 py-2 rounded ${
               selectedCategory === category.id ? "bg-blue-500 text-white" : "bg-gray-200"
             }`}
-            onClick={() => handleCategoryChange(category.id)}
+            onClick={() => setSelectedCategory(category.id)}
           >
             {category.name}
           </button>
-        ))
-      ) : (
-        <p>No categories available</p>
-      )}
+        ))}
+      </div>
+
+      {/* Price Range Filter */}
+      <div>
+        <label className="block mb-2 text-sm font-medium text-gray-700">
+          Price Range: ${priceRange[0]} - ${priceRange[1]}
+        </label>
+        <input
+          type="range"
+          min="0"
+          max="500"
+          step="10"
+          value={priceRange[1]}
+          onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+          className="w-full"
+        />
+      </div>
     </div>
   );
 };
