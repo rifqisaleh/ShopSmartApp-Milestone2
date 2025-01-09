@@ -29,28 +29,36 @@ const Register = () => {
     dob: "",
   });
 
-  const [roles, setRoles] = useState<string[]>(["Customer", "Admin"]); // For dynamic roles
+  // Add this interface for the API user structure
+interface User {
+  role: string;
+}
+
+  const [roles, setRoles] = useState<string[]>(["Customer", "Admin"]); // Default roles
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState<boolean>(false);
-  
 
-  // Fetch roles dynamically (if applicable)
+  // Fetch roles dynamically
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await fetch("https://api.yourdomain.com/roles");
+        const response = await fetch("https://api.escuelajs.co/api/v1/users");
         if (!response.ok) {
           throw new Error("Failed to fetch roles");
         }
-        const rolesData: string[] = await response.json();
+  
+        const users: User[] = await response.json();
+  
+        const rolesData = [...new Set(users.map((user) => user.role))];
         setRoles(rolesData);
       } catch (error) {
         console.error("Error fetching roles:", error);
       }
     };
-
+  
     fetchRoles();
   }, []);
+
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
