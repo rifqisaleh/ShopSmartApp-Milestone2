@@ -42,7 +42,7 @@ const ProductDetail: React.FC = () => {
     if (cartContext && product) {
       cartContext.addToCart({
         id: product.id,
-        name: product.title,
+        title: product.title,
         price: product.price,
       });
     }
