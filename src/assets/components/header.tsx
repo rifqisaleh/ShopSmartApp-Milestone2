@@ -4,13 +4,17 @@ import { useAuth } from "../auth/AuthContext";
 import { CartContext } from "./cart";
 
 const Header: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const cartContext = useContext(CartContext);
 
   // Debugging Logs
   console.log("Header: isAuthenticated =", isAuthenticated); // Log the authentication status
   console.log("Header: Token in localStorage =", localStorage.getItem("token")); // Log the token
+  
+  if (isLoading) {
+    return null; // Optionally, show a loader or skeleton component
+  }
 
   if (!cartContext) {
     return null; // Ensure the header renders only when CartContext is available

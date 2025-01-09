@@ -2,60 +2,51 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 interface AuthContextProps {
   isAuthenticated: boolean;
+  isLoading: boolean; // New loading state
   login: (token: string) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-// Utility function to check if the token is valid and not expired
 const isTokenValid = (token: string): boolean => {
   try {
-    const payload = JSON.parse(atob(token.split(".")[1])); // Decode JWT payload
-    return payload.exp * 1000 > Date.now(); // Compare expiry with the current time
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp * 1000 > Date.now();
   } catch (e) {
-    console.error("Invalid token:", e);
-    return false; // Return false if the token is invalid
+    return false;
   }
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
-  // Check for a valid token in localStorage on app load
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("Token:", token); // Log the token
     if (token && isTokenValid(token)) {
       console.log("isAuthenticated: true (Token is valid)");
       setIsAuthenticated(true);
-    
     } else {
       console.log("isAuthenticated: false (Token is invalid or expired)");
-      localStorage.removeItem("token"); // Remove invalid/expired token
+      localStorage.removeItem("token");
       setIsAuthenticated(false);
     }
+    setIsLoading(false); // Validation complete
   }, []);
 
   const login = (token: string) => {
-    console.log("Logging in...");
-    console.log("Token before saving:", token); // Log the token being saved
     localStorage.setItem("token", token);
     setIsAuthenticated(true);
-    console.log("isAuthenticated after login:", isAuthenticated); // Log updated state
-
   };
 
   const logout = () => {
-    console.log("Logging out...");
-  console.log("Token before clearing:", localStorage.getItem("token")); // Log the token being cleared
-  localStorage.removeItem("token");
-  setIsAuthenticated(false);
-  console.log("isAuthenticated after logout:", isAuthenticated); // Log updated state
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
