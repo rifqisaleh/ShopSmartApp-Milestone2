@@ -19,32 +19,30 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
-
+  
     try {
-      const response = await fetch(
-        "https://api.escuelajs.co/api/v1/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
+      const response = await fetch("https://api.escuelajs.co/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+  
       if (!response.ok) {
         throw new Error("Invalid credentials. Please try again.");
       }
-
-    const data = await response.json();
-      login(data.access_token); 
-      navigate("/dashboard");
+  
+      const data = await response.json();
+      login(data.access_token); // Store token in AuthContext
+      navigate("/dashboard"); // Navigate after login
     } catch (err) {
       console.error("Login error:", err);
       setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     }
   };
 
+  
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">

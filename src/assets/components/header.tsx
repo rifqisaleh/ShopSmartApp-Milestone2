@@ -9,11 +9,11 @@ const Header: React.FC = () => {
   const cartContext = useContext(CartContext);
 
   // Debugging Logs
-  console.log("Header: isAuthenticated =", isAuthenticated); // Log the authentication status
-  console.log("Header: Token in localStorage =", localStorage.getItem("token")); // Log the token
-  
+  console.log("Header: isAuthenticated =", isAuthenticated);
+  console.log("Header: Token in localStorage =", localStorage.getItem("token"));
+
   if (isLoading) {
-    return null; // Optionally, show a loader or skeleton component
+    return null; // Prevent rendering while loading
   }
 
   if (!cartContext) {
@@ -24,8 +24,6 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-urbanChic-50 text-white p-4 flex justify-between items-center">
-     
-
       {/* Navigation Links */}
       <nav>
         <ul className="flex space-x-4">
@@ -35,7 +33,7 @@ const Header: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link to="/shop" className="mb-4 text-black hover:underline hover:underline">
+            <Link to="/shop" className="mb-4 text-black hover:underline">
               SHOP
             </Link>
           </li>
@@ -52,9 +50,9 @@ const Header: React.FC = () => {
         </ul>
       </nav>
 
-       {/* Logo */}
-       <div className="text-xl font-bold">
-        <Link to="/" className=" mb-4 text-black hover:underline">
+      {/* Logo */}
+      <div className="text-xl font-bold">
+        <Link to="/" className="mb-4 text-black hover:underline">
           ShopSmart
         </Link>
       </div>
