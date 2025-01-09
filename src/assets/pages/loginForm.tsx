@@ -19,6 +19,9 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+
+    // Debugging: Log the form data being sent
+  console.log("Login Payload:", formData);
   
     try {
       const response = await fetch("https://api.escuelajs.co/api/v1/auth/login", {
@@ -42,7 +45,7 @@ const Login = () => {
     }
   };
 
-  
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
