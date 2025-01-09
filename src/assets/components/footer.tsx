@@ -6,17 +6,14 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-900 text-white py-8">
       <section className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8">
-        {/* Contact Us Section */}
+        {/* Shipping Policy Section */}
         <div>
-          <h3 className="text-lg font-bold mb-4">Contact Us</h3>
-          <p>Email: <span className="text-gray-400">aeroindahfc@aero.com</span></p>
-          <p>Phone: <span className="text-gray-400">+62812309876</span></p>
-          <p>
-            Address:
-            <span className="text-gray-400">
-              <br /> Pondok Cabe Airport
-              <br /> Jl. Pondok Cabe Raya Tangerang Selatan 15418
-            </span>
+          <h3 className="text-lg font-bold mb-4">Shipping Policy</h3>
+          <p className="text-gray-400">
+            We offer fast and reliable shipping to your doorstep. Orders are processed within 24 hours on business days.
+          </p>
+          <p className="text-gray-400">
+            For detailed information, visit our <a href="/shipping-policy" className="text-blue-400 hover:underline">Shipping Policy</a> page.
           </p>
         </div>
 
@@ -25,19 +22,13 @@ const Footer: React.FC = () => {
           <h3 className="text-lg font-bold mb-4">Quick Links</h3>
           <ul className="space-y-2">
             <li>
-              <a href="#index.html" className="hover:underline text-gray-400">Home</a>
+              <a href="/landingPage" className="hover:underline text-gray-400">Home</a>
             </li>
             <li>
-              <a href="#ourservices" className="hover:underline text-gray-400">Our Services</a>
+              <a href="/" className="hover:underline text-gray-400">Shop</a>
             </li>
             <li>
-              <a href="#fleet" className="hover:underline text-gray-400">Our Fleet</a>
-            </li>
-            <li>
-              <a href="#ourmissions" className="hover:underline text-gray-400">Our Mission</a>
-            </li>
-            <li>
-              <a href="#team" className="hover:underline text-gray-400">Our Team</a>
+              <a href="/cart" className="hover:underline text-gray-400">Cart</a>
             </li>
           </ul>
         </div>

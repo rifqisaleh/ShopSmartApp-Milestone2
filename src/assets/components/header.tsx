@@ -15,29 +15,24 @@ const Header: React.FC = () => {
   const { cartCount } = cartContext;
 
   return (
-    <header className="bg-blue-500 text-white p-4 flex justify-between items-center">
-      {/* Logo */}
-      <div className="text-lg font-bold">
-        <Link to="/" className="hover:underline">
-          ShopSmart
-        </Link>
-      </div>
+    <header className="bg-urbanChic-50 text-white p-4 flex justify-between items-center">
+     
 
       {/* Navigation Links */}
       <nav>
         <ul className="flex space-x-4">
           <li>
-            <Link to="/landingPage" className="hover:underline">
+            <Link to="/" className="mb-4 text-black hover:underline">
               HOME
             </Link>
           </li>
           <li>
-            <Link to="/" className="hover:underline">
+            <Link to="/shop" className="mb-4 text-black hover:underline hover:underline">
               SHOP
             </Link>
           </li>
           <li>
-            <Link to="/cart" className="hover:underline relative">
+            <Link to="/cart" className="mb-4 text-black hover:underline relative">
               CART
               {cartCount > 0 && (
                 <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
@@ -48,6 +43,13 @@ const Header: React.FC = () => {
           </li>
         </ul>
       </nav>
+
+       {/* Logo */}
+       <div className="text-xl font-bold">
+        <Link to="/" className=" mb-4 text-black hover:underline">
+          ShopSmart
+        </Link>
+      </div>
 
       {/* Authentication Links */}
       <div className="flex items-center space-x-4">
