@@ -21,29 +21,39 @@ const Login = () => {
     setError(null);
 
     // Debugging: Log the form data being sent
-  console.log("Login Payload:", formData);
+ 
   
-    try {
-      const response = await fetch("https://api.escuelajs.co/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+  try {
+    console.log("Login Payload:", formData);
   
-      if (!response.ok) {
-        throw new Error("Invalid credentials. Please try again.");
-      }
+    const response = await fetch("https://api.escuelajs.co/api/v1/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
   
-      const data = await response.json();
-      login(data.access_token); // Store token in AuthContext
-      navigate("/dashboard"); // Navigate after login
-    } catch (err) {
-      console.error("Login error:", err);
-      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
+    if (!response.ok) {
+      const errorResponse = await response.json(); // Parse error details
+      console.error("API Error Response:", errorResponse); // Log detailed error
+      throw new Error(errorResponse.message || "Invalid credentials. Please try again.");
     }
-  };
+  
+    const data = await response.json();
+    console.log("Token Received:", data.access_token);
+  
+   // Call login to set the token and isAuthenticated
+   console.log("Calling login function with token:", data.access_token);
+   login(data.access_token);
+
+   // Navigate only after login is successful
+   navigate("/dashboard");
+ } catch (err) {
+   console.error("Login failed:", err);
+   setError(err instanceof Error ? err.message : "An unexpected error occurred.");
+ }
+};
 
 
   return (
