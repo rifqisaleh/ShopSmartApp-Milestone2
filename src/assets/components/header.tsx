@@ -8,6 +8,10 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const cartContext = useContext(CartContext);
 
+  // Debugging Logs
+  console.log("Header: isAuthenticated =", isAuthenticated); // Log the authentication status
+  console.log("Header: Token in localStorage =", localStorage.getItem("token")); // Log the token
+
   if (!cartContext) {
     return null; // Ensure the header renders only when CartContext is available
   }
