@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 
+// Declare apiUrl at the top of the file
+const apiUrl = import.meta.env.VITE_API_URL;
+console.log("API URL:", apiUrl);
+
 interface FormData {
   name: string;
   email: string;
@@ -41,13 +45,14 @@ const Register = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}users`);
+        const response = await fetch(`${apiUrl}users`);
         if (!response.ok) {
           throw new Error("Failed to fetch roles");
         }
 
         const users: User[] = await response.json();
         const rolesData = [...new Set(users.map((user) => user.role))];
+        console.log("Fetched roles:", rolesData); // Log roles here
         setRoles(rolesData);
       } catch (error) {
         console.error("Error fetching roles:", error);
@@ -90,9 +95,18 @@ const Register = () => {
       return;
     }
 
+    // Log the payload before sending the request
+  // Log the payload before sending
+  console.log("Payload being sent:", {
+    name: formData.name,
+    email: formData.email,
+    password: formData.password,
+    avatar: "https://via.placeholder.com/150",
+  });
+
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}users/`, {
+      const response = await fetch(`${apiUrl}users/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,12 +115,18 @@ const Register = () => {
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          role: formData.role, // Example additional field
+          dob: formData.dob,   // Example additional field
+          avatar: "https://via.placeholder.com/150",
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to register. Please try again.");
+        const errorData = await response.json(); // Try parsing the error message
+        console.error("API Error Response:", errorData);
+        throw new Error(errorData.message || "Failed to register. Please try again.");
       }
+      
 
       alert("Registration successful!");
       // Reset form after successful registration
