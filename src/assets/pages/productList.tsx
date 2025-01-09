@@ -8,14 +8,24 @@ export interface Product {
   price: number;
   images: string[] | string | null;
   description?: string;
-  category?: {
+  category: {
     id: string;
     name: string;
   };
 }
 
+// Static category map
+const categoryMap: Record<string, string> = {
+  "1": "Clothes",
+  "2": "Electronics",
+  "3": "Furniture",
+  "4": "Shoes",
+  "5": "Misc",
+};
+
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [filters, setFilters] = useState<{
     categoryId: string | null;
     searchQuery: string;
@@ -36,6 +46,49 @@ const ProductList: React.FC = () => {
   };
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("https://api.escuelajs.co/api/v1/categories");
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+       // Map category IDs to standardized names and combine Misc categories
+       const standardizedCategories = data
+  .map((category: { id: string; name: string }) => ({
+    id: category.id,
+    name: categoryMap[category.id] || "Misc",
+  }))
+  .reduce(
+    (uniqueCategories: { id: string; name: string }[], category: { id: string; name: string }) => {
+      // Ensure only one "Misc" category exists
+      if (category.name === "Misc") {
+        if (!uniqueCategories.some((cat) => cat.name === "Misc")) {
+          uniqueCategories.push({ id: "5", name: "Misc" }); // Use "5" for the Misc category
+        }
+      } else {
+        uniqueCategories.push(category);
+      }
+      return uniqueCategories;
+    },
+    [] as { id: string; name: string }[]
+  );
+
+
+
+        setCategories(standardizedCategories);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        setError("Failed to load categories. Please try again later.");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
         const url = filters.categoryId
@@ -49,19 +102,20 @@ const ProductList: React.FC = () => {
 
         const data: Product[] = await response.json();
 
-        // Apply search and price filters
-        const filteredProducts = data
-          .filter((product) => product.title.toLowerCase().includes(filters.searchQuery.toLowerCase()))
-          .filter((product) => product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1]);
-
-        const processedProducts = filteredProducts.map((product) => ({
+        const processedProducts = data.map((product) => ({
           ...product,
+          category: {
+            ...product.category,
+            id: product.category?.id || "5",
+            name: categoryMap[product.category?.id || "5"],
+          },
           images: normalizeImages(product.images),
         }));
 
         setProducts(processedProducts);
-      } catch (error) {
-        console.error("Error Fetching Products:", error);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching products:", err);
         setError("Failed to load products. Please try again later.");
       }
     };
@@ -69,13 +123,20 @@ const ProductList: React.FC = () => {
     fetchProducts();
   }, [filters]);
 
-  if (error) {
-    return <p>{error}</p>;
-  }
-
   return (
     <div>
-      <CategoryFilter onFilterChange={setFilters} />
+      {error && <p className="text-red-500">{error}</p>}
+      <CategoryFilter
+  categories={categories} // Pass standardized categories
+  onFilterChange={({ categoryId, searchQuery, priceRange }) =>
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      categoryId,
+      searchQuery,
+      priceRange,
+    }))
+  }
+/>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />

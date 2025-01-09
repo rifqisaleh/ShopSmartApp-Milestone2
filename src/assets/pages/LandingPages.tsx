@@ -3,6 +3,15 @@ import Slider from "react-slick";
 import { useNavigate } from "react-router-dom";
 import { Product } from "../pages/productList"; // Assuming this interface is correct
 
+// Add or import the categoryMap from ProductList or a utility file
+const categoryMap: Record<string, string> = {
+  "1": "Clothes",
+  "2": "Electronics",
+  "3": "Furniture",
+  "4": "Shoes",
+  "5": "Misc",
+};
+
 const LandingPage: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
@@ -85,60 +94,50 @@ const LandingPage: React.FC = () => {
 
         {/* Right Section: Carousel */}
         <div className="sm:w-1/2 p-4">
-  {error ? (
-    <p className="text-red-500">{error}</p>
-  ) : (
-    <Slider {...settings}>
-      {featuredProducts.map((product) => (
-        <div
-          key={product.id}
-          className="p-4 cursor-pointer"
-          onClick={() => navigate(`/product/${product.id}`)}
-        >
-          <img
-            src={getFirstImage(product.images) || "/placeholder.jpeg"}
-            alt={product.title}
-            className="w-full h-96 object-cover rounded mb-2 hover:opacity-90 transition-opacity"
-          />
-          <h2 className="text-xl font-semibold text-center">{product.title}</h2>
+          {error ? (
+            <p className="text-red-500">{error}</p>
+          ) : (
+            <Slider {...settings}>
+              {featuredProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="p-4 cursor-pointer"
+                  onClick={() => navigate(`/product/${product.id}`)}
+                >
+                  <img
+                    src={getFirstImage(product.images) || "/placeholder.jpeg"}
+                    alt={product.title}
+                    className="w-full h-96 object-cover rounded mb-2 hover:opacity-90 transition-opacity"
+                  />
+                  <h2 className="text-xl font-semibold text-center">{product.title}</h2>
+                </div>
+              ))}
+            </Slider>
+          )}
         </div>
-      ))}
-    </Slider>
-  )}
-</div>
       </div>
 
       {/* Category Section */}
       <div className="w-full max-w-7xl mt-16 mb-16">
-        <h2 className="text-4xl font-bold mb-16 text-center">Shop by Category</h2>
+        <h2 className="text-4xl text-urbanChic-600 mb-16 text-center">Shop by Category</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {categoryProducts.map((product) => (
             <div
               key={product.id}
-              className="relative bg-white rounded-lg shadow-lg overflow-hidden"
+              className="flex flex-col items-center cursor-pointer"
             >
-              {/* Category Tag */}
-              <span className="absolute top-2 left-2 bg-gray-900 text-white text-xs px-2 py-1 rounded">
-              {product.category?.name}
-              </span>
-
-              {/* Product Image */}
+              {/* Product Image (Clickable) */}
               <img
                 src={getFirstImage(product.images) || "/placeholder.jpeg"}
                 alt={product.title}
-                className="w-full h-40 object-contain bg-gray-200"
+                className="w-full h-40 object-contain hover:scale-105 transition-transform"
+                onClick={() => navigate(`/shop?category=${product.category?.id}`)} // Navigate to shop with category filter
               />
 
-              {/* Product Details */}
-              <div className="p-4 flex flex-col items-center">
-                <h3 className="text-lg font-semibold text-center">{product.title}</h3>
-                <button
-                  onClick={() => navigate(`/product/${product.id}`)}
-                  className="bg-blue-500 text-white text-sm px-4 py-2 mt-4 rounded hover:bg-blue-600"
-                >
-                  Go to store
-                </button>
-              </div>
+              {/* Category Name */}
+              <span className="mt-2 text-sm text-gray-600 font-medium">
+                {categoryMap[product.category?.id || "5"]} {/* Use mapped category name */}
+              </span>
             </div>
           ))}
         </div>

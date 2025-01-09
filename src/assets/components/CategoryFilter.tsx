@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 interface Category {
   id: string;
@@ -6,40 +6,36 @@ interface Category {
 }
 
 interface CategoryFilterProps {
-  onFilterChange: (filters: { 
-    categoryId: string | null; 
-    searchQuery: string; 
-    priceRange: [number, number]; 
+  categories: Category[];
+  onFilterChange: (filters: {
+    categoryId: string | null;
+    searchQuery: string;
+    priceRange: [number, number];
   }) => void;
 }
 
-const CategoryFilter: React.FC<CategoryFilterProps> = ({ onFilterChange }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
+const CategoryFilter: React.FC<CategoryFilterProps> = ({
+  categories,
+  onFilterChange,
+}) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("https://api.escuelajs.co/api/v1/categories");
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
-        }
+  const handleCategoryChange = (categoryId: string | null) => {
+    setSelectedCategory(categoryId);
+    onFilterChange({ categoryId, searchQuery, priceRange });
+  };
 
-        const data: Category[] = await response.json();
-        setCategories(data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
+  const handleSearchQueryChange = (query: string) => {
+    setSearchQuery(query);
+    onFilterChange({ categoryId: selectedCategory, searchQuery: query, priceRange });
+  };
 
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    onFilterChange({ categoryId: selectedCategory, searchQuery, priceRange });
-  }, [selectedCategory, searchQuery, priceRange, onFilterChange]);
+  const handlePriceRangeChange = (newRange: [number, number]) => {
+    setPriceRange(newRange);
+    onFilterChange({ categoryId: selectedCategory, searchQuery, priceRange: newRange });
+  };
 
   return (
     <div className="space-y-4">
@@ -49,7 +45,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ onFilterChange }) => {
           type="text"
           placeholder="Search products..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => handleSearchQueryChange(e.target.value)}
           className="w-full px-4 py-2 border rounded-md"
         />
       </div>
@@ -57,18 +53,21 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ onFilterChange }) => {
       {/* Category Buttons */}
       <div className="flex flex-wrap space-x-2">
         <button
-          className={`px-4 py-2 rounded ${!selectedCategory ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-          onClick={() => setSelectedCategory(null)}
+          className={`px-4 py-2 rounded ${
+            !selectedCategory ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+          onClick={() => handleCategoryChange(null)}
         >
           All
         </button>
+
         {categories.map((category) => (
           <button
             key={category.id}
             className={`px-4 py-2 rounded ${
               selectedCategory === category.id ? "bg-blue-500 text-white" : "bg-gray-200"
             }`}
-            onClick={() => setSelectedCategory(category.id)}
+            onClick={() => handleCategoryChange(category.id)}
           >
             {category.name}
           </button>
@@ -86,7 +85,9 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ onFilterChange }) => {
           max="500"
           step="10"
           value={priceRange[1]}
-          onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+          onChange={(e) =>
+            handlePriceRangeChange([priceRange[0], Number(e.target.value)])
+          }
           className="w-full"
         />
       </div>
