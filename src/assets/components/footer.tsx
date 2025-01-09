@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
               <a href="/" className="hover:underline text-gray-400">Shop</a>
             </li>
             <li>
-              <a href="/cart" className="hover:underline text-gray-400">Cart</a>
+              <a href="/shipping-policy" className="hover:underline text-gray-400">Terms & Conditions</a>
             </li>
           </ul>
         </div>

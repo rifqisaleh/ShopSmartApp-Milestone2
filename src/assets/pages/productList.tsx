@@ -15,7 +15,7 @@ export interface Product {
 }
 
 // Static category map
-const categoryMap: Record<string, string> = {
+export const categoryMap: Record<string, string> = {
   "1": "Clothes",
   "2": "Electronics",
   "3": "Furniture",
@@ -55,28 +55,29 @@ const ProductList: React.FC = () => {
 
         const data = await response.json();
 
-       // Map category IDs to standardized names and combine Misc categories
-       const standardizedCategories = data
-  .map((category: { id: string; name: string }) => ({
-    id: category.id,
-    name: categoryMap[category.id] || "Misc",
-  }))
-  .reduce(
-    (uniqueCategories: { id: string; name: string }[], category: { id: string; name: string }) => {
-      // Ensure only one "Misc" category exists
-      if (category.name === "Misc") {
-        if (!uniqueCategories.some((cat) => cat.name === "Misc")) {
-          uniqueCategories.push({ id: "5", name: "Misc" }); // Use "5" for the Misc category
-        }
-      } else {
-        uniqueCategories.push(category);
-      }
-      return uniqueCategories;
-    },
-    [] as { id: string; name: string }[]
-  );
-
-
+        // Map category IDs to standardized names and combine Misc categories
+        const standardizedCategories = data
+          .map((category: { id: string; name: string }) => ({
+            id: category.id,
+            name: categoryMap[category.id] || "Misc",
+          }))
+          .reduce(
+            (
+              uniqueCategories: { id: string; name: string }[],
+              category: { id: string; name: string }
+            ) => {
+              // Ensure only one "Misc" category exists
+              if (category.name === "Misc") {
+                if (!uniqueCategories.some((cat) => cat.name === "Misc")) {
+                  uniqueCategories.push({ id: "5", name: "Misc" }); // Use "5" for the Misc category
+                }
+              } else {
+                uniqueCategories.push(category);
+              }
+              return uniqueCategories;
+            },
+            [] as { id: string; name: string }[]
+          );
 
         setCategories(standardizedCategories);
       } catch (err) {
@@ -123,22 +124,33 @@ const ProductList: React.FC = () => {
     fetchProducts();
   }, [filters]);
 
+  const displayedProducts = products.filter((product) => {
+    const matchesSearchQuery = product.title
+      .toLowerCase()
+      .includes(filters.searchQuery.toLowerCase());
+    const withinPriceRange =
+      product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1];
+
+    return matchesSearchQuery && withinPriceRange;
+  });
+
   return (
     <div>
       {error && <p className="text-red-500">{error}</p>}
       <CategoryFilter
-  categories={categories} // Pass standardized categories
-  onFilterChange={({ categoryId, searchQuery, priceRange }) =>
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      categoryId,
-      searchQuery,
-      priceRange,
-    }))
-  }
-/>
+        categories={categories} // Pass standardized categories
+        onFilterChange={({ categoryId, searchQuery, priceRange }) => {
+          console.log("Filters updated:", { categoryId, searchQuery, priceRange }); // Debug log
+          setFilters((prevFilters) => ({
+            ...prevFilters,
+            categoryId,
+            searchQuery,
+            priceRange,
+          }));
+        }}
+      />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {products.map((product) => (
+        {displayedProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

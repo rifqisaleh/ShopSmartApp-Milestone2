@@ -10,7 +10,7 @@ import ShoppingCart from "./assets/pages/shoppingCart";// Adjusted import path
 import CartProvider from "./assets/components/cart";
 import { AuthProvider } from "./assets/auth/AuthContext";
 import LandingPage from "./assets/pages/LandingPages";
-
+import ShippingPolicy from "./assets/pages/ShippingPolicy";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -67,6 +67,14 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <ShoppingCart />
+      </Layout>
+    ),
+  },
+  {
+    path: "/shipping-policy",
+    element:(
+      <Layout>
+        <ShippingPolicy />
       </Layout>
     ),
   },

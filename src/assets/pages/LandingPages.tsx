@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import { useNavigate } from "react-router-dom";
-import { Product } from "../pages/productList"; // Assuming this interface is correct
+import { categoryMap } from "../pages/productList"; // Import categoryMap
 
-// Add or import the categoryMap from ProductList or a utility file
-const categoryMap: Record<string, string> = {
-  "1": "Clothes",
-  "2": "Electronics",
-  "3": "Furniture",
-  "4": "Shoes",
-  "5": "Misc",
-};
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  images: string[] | string | null;
+  description?: string;
+  category: {
+    id: string;
+    name: string;
+  };
+}
+
+interface Category {
+  id: number;
+  name: string;
+  image: string;
+}
 
 const LandingPage: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -38,19 +47,37 @@ const LandingPage: React.FC = () => {
           }
         });
 
-        // Get unique products for the category section
-        const uniqueCategoryProducts = new Map();
-        products.forEach((product) => {
-          if (
-            !uniqueCategoryProducts.has(product.category?.id) &&
-            uniqueCategoryProducts.size < 4
-          ) {
-            uniqueCategoryProducts.set(product.category?.id, product);
-          }
-        });
-
         setFeaturedProducts(Array.from(uniqueFeaturedProducts.values()));
-        setCategoryProducts(Array.from(uniqueCategoryProducts.values()));
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred.");
+        }
+      }
+    };
+
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("https://api.escuelajs.co/api/v1/categories");
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories");
+        }
+        const data: Category[] = await response.json();
+
+        // Filter categories based on allowed IDs in categoryMap
+        const allowedCategoryIds = Object.keys(categoryMap); // Get IDs from categoryMap
+        const filteredCategories = data.filter((category) =>
+          allowedCategoryIds.includes(category.id.toString())
+        );
+
+        // Map IDs to standardized names
+        const standardizedCategories = filteredCategories.map((category) => ({
+          ...category,
+          name: categoryMap[category.id.toString()], // Map to standardized name
+        }));
+
+        setCategories(standardizedCategories);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
@@ -61,6 +88,7 @@ const LandingPage: React.FC = () => {
     };
 
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const getFirstImage = (images: string[] | string | null): string | undefined => {
@@ -81,7 +109,7 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-urbanChic-100  flex flex-col items-center p-6">
+    <div className="bg-urbanChic-100 flex flex-col items-center p-6">
       {/* Welcome Section */}
       <div className="bg-urbanChic-100 flex flex-col sm:flex-row items-center w-full max-w-7xl mt-16 mb-16">
         {/* Left Section */}
@@ -121,23 +149,25 @@ const LandingPage: React.FC = () => {
       <div className="w-full max-w-7xl mt-16 mb-16">
         <h2 className="text-4xl text-urbanChic-600 mb-16 text-center">Shop by Category</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {categoryProducts.map((product) => (
+          {categories.map((category) => (
             <div
-              key={product.id}
+              key={category.id}
               className="flex flex-col items-center cursor-pointer"
+              onClick={() => navigate(`/shop?category=${category.id}`)} // Navigate to shop with category filter
             >
-              {/* Product Image (Clickable) */}
+              {/* Category Image */}
               <img
-                src={getFirstImage(product.images) || "/placeholder.jpeg"}
-                alt={product.title}
+                src={category.image || "/placeholder.jpeg"}
+                alt={category.name}
                 className="w-full h-40 object-contain hover:scale-105 transition-transform"
-                onClick={() => navigate(`/shop?category=${product.category?.id}`)} // Navigate to shop with category filter
+                onError={(e) => {
+                  console.error(`Failed to load image for category ${category.name}:`, category.image);
+                  e.currentTarget.src = "https://via.placeholder.com/150"; // Fallback image
+                }}
               />
 
               {/* Category Name */}
-              <span className="mt-2 text-sm text-gray-600 font-medium">
-                {categoryMap[product.category?.id || "5"]} {/* Use mapped category name */}
-              </span>
+              <span className="mt-2 text-sm text-gray-600 font-medium">{category.name}</span>
             </div>
           ))}
         </div>
@@ -147,3 +177,4 @@ const LandingPage: React.FC = () => {
 };
 
 export default LandingPage;
+

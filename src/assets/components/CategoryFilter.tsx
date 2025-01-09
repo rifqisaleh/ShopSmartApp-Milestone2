@@ -17,24 +17,30 @@ interface CategoryFilterProps {
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories,
   onFilterChange,
-}) => {
+}) => { console.log("CategoryFilter rendered");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
 
   const handleCategoryChange = (categoryId: string | null) => {
     setSelectedCategory(categoryId);
-    onFilterChange({ categoryId, searchQuery, priceRange });
+    const filters = { categoryId, searchQuery, priceRange };
+    console.log("Filters changed:", filters); // Debugging
+    onFilterChange(filters);
   };
 
   const handleSearchQueryChange = (query: string) => {
     setSearchQuery(query);
-    onFilterChange({ categoryId: selectedCategory, searchQuery: query, priceRange });
+    const filters = { categoryId: selectedCategory, searchQuery: query, priceRange };
+    console.log("Filters changed:", filters); // Debugging
+    onFilterChange(filters);
   };
 
   const handlePriceRangeChange = (newRange: [number, number]) => {
     setPriceRange(newRange);
-    onFilterChange({ categoryId: selectedCategory, searchQuery, priceRange: newRange });
+    const filters = { categoryId: selectedCategory, searchQuery, priceRange: newRange };
+    console.log("Filters changed:", filters); // Debugging
+    onFilterChange(filters);
   };
 
   return (
@@ -65,7 +71,9 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           <button
             key={category.id}
             className={`px-4 py-2 rounded ${
-              selectedCategory === category.id ? "bg-blue-500 text-white" : "bg-gray-200"
+              selectedCategory === category.id
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200"
             }`}
             onClick={() => handleCategoryChange(category.id)}
           >
