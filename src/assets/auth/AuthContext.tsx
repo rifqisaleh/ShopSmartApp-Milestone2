@@ -51,21 +51,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsAuthenticated(false);
   };
 
-  const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
+  const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("No token available. Please log in.");
-    }
-
+    if (!token) throw new Error("No token available. Please log in.");
+  
     const headers = {
       ...options.headers,
       Authorization: `Bearer ${token}`,
     };
-
+  
     console.log("Making authenticated request:", { url, headers });
-    return fetch(url, { ...options, headers });
+    const response = await fetch(url, { ...options, headers });
+  
+    if (!response.ok) {
+      const errorResponse = await response.json(); // Log detailed error
+      console.error("API Error Response:", errorResponse);
+      throw new Error(errorResponse.message || "Failed to fetch");
+    }
+  
+    return response;
   };
-
   return (
     <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, fetchWithAuth }}>
       {children}
