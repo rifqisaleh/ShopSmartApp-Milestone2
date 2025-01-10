@@ -54,13 +54,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
     const token = localStorage.getItem("token");
     if (!token) {
+      console.error("No token found in localStorage.");
       throw new Error("No token available.");
-    }
-  
-    // If the refreshToken is used, handle null explicitly
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (!refreshToken) {
-      throw new Error("No refresh token available.");
     }
   
     const headers = {
@@ -69,11 +64,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   
     const fullUrl = `${import.meta.env.VITE_API_URL}${url}`;
-    console.log("Making request to:", fullUrl, "with headers:", headers);
-    console.log("Request headers:", headers);
+    console.log("Request URL:", fullUrl);
+    console.log("Request Headers:", headers);
   
     const response = await fetch(fullUrl, { ...options, headers });
-    
+  
     if (!response.ok) {
       const errorData = await response.json();
       console.error("API Error Response:", errorData);
