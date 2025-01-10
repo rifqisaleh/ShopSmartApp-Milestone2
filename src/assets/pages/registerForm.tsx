@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Declare apiUrl at the top of the file
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -38,7 +39,8 @@ const Register = () => {
   interface User {
     role: string;
   }
-
+  // Initialize the navigate function
+  const navigate = useNavigate(); 
   // State for dynamic role selection
   const [roles, setRoles] = useState<string[]>(["Customer", "Admin"]); // Default roles
   const [errors, setErrors] = useState<FormErrors>({});
@@ -137,6 +139,10 @@ const Register = () => {
         role: "",
         dob: "",
       });
+     
+      // Redirect to login page
+      
+     navigate("/login");
     } catch (err) {
       console.error("Registration error:", err);
       if (err instanceof Error) {

@@ -120,52 +120,51 @@ const LandingPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Right Section: Carousel */}
-        <div className="sm:w-1/2 p-4">
-          {error ? (
-            <p className="text-red-500">{error}</p>
-          ) : (
-            <Slider {...settings}>
-              {featuredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="p-4 cursor-pointer"
-                  onClick={() => navigate(`/product/${product.id}`)}
-                >
-                  <img
-                    src={getFirstImage(product.images) || "/placeholder.jpeg"}
-                    alt={product.title}
-                    className="w-full h-96 object-cover rounded mb-2 hover:opacity-90 transition-opacity"
-                  />
-                  <h2 className="text-xl font-semibold text-center">{product.title}</h2>
-                </div>
-              ))}
-            </Slider>
-          )}
+       {/* Right Section: Carousel */}
+<div className="w-full sm:w-1/2 p-4">
+  {error ? (
+    <p className="text-red-500">{error}</p>
+  ) : (
+    <Slider {...settings}>
+      {featuredProducts.map((product) => (
+        <div
+          key={product.id}
+          className="p-4 cursor-pointer"
+          onClick={() => navigate(`/product/${product.id}`)}
+        >
+          <img
+            src={getFirstImage(product.images) || "/placeholder.jpeg"}
+            alt={product.title}
+            className="w-full h-auto max-h-96 object-cover rounded mb-2 hover:opacity-90 transition-opacity"
+          />
+          <h2 className="text-xl font-semibold text-center">{product.title}</h2>
         </div>
+      ))}
+    </Slider>
+  )}
+</div>
       </div>
 
       {/* Category Section */}
       <div className="w-full max-w-7xl mt-16 mb-16">
         <h2 className="text-4xl text-urbanChic-600 mb-16 text-center">Shop by Category</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {categories.map((category) => (
             <div
               key={category.id}
               className="flex flex-col items-center cursor-pointer"
-              onClick={() => navigate(`/shop?category=${category.id}`)} // Navigate to shop with category filter
+              onClick={() => navigate(`/shop?category=${category.id}`)}
             >
               {/* Category Image */}
               <img
                 src={category.image || "/placeholder.jpeg"}
                 alt={category.name}
-                className="w-full h-40 object-contain hover:scale-105 transition-transform"
+                className="w-28 h-28 sm:w-36 sm:h-36 object-cover hover:scale-105 transition-transform"
                 onError={(e) => {
                   console.error(`Failed to load image for category ${category.name}:`, category.image);
                   e.currentTarget.src = "https://via.placeholder.com/150"; // Fallback image
                 }}
               />
-
               {/* Category Name */}
               <span className="mt-2 text-sm text-gray-600 font-medium">{category.name}</span>
             </div>
@@ -177,4 +176,3 @@ const LandingPage: React.FC = () => {
 };
 
 export default LandingPage;
-

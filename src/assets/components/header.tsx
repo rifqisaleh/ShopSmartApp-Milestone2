@@ -74,16 +74,6 @@ const Header: React.FC = () => {
               </Link>
             </li>
             <li>
-              <Link to="/cart" className="text-black hover:underline relative">
-                CART
-                {cartCount > 0 && (
-                  <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-            </li>
-            <li>
               {isAuthenticated ? (
                 <button
                   onClick={() => navigate("/dashboard")}
@@ -99,6 +89,16 @@ const Header: React.FC = () => {
                   LOGIN
                 </button>
               )}
+            </li>
+            <li>
+              <Link to="/cart" className="text-black hover:underline relative">
+                CART
+                {cartCount > 0 && (
+                  <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
             </li>
           </ul>
         </nav>
