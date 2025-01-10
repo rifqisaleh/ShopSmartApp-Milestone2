@@ -48,7 +48,7 @@ const ProductList: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/categories");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}categories`);
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }
@@ -92,16 +92,18 @@ const ProductList: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        const baseUrl = `${import.meta.env.VITE_API_URL}products`;
         const url = filters.categoryId
-          ? `https://api.escuelajs.co/api/v1/products/?categoryId=${filters.categoryId}`
-          : "https://api.escuelajs.co/api/v1/products";
-
+          ? `${baseUrl}/?categoryId=${filters.categoryId}`
+          : baseUrl;
+  
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }
-
+  
         const data: Product[] = await response.json();
+        console.log("Fetched Products:", data); // Debugging log
 
         const processedProducts = data.map((product) => ({
           ...product,
@@ -115,6 +117,8 @@ const ProductList: React.FC = () => {
 
         setProducts(processedProducts);
         setError(null);
+      
+      
       } catch (err) {
         console.error("Error fetching products:", err);
         setError("Failed to load products. Please try again later.");

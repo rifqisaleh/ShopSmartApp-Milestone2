@@ -30,7 +30,7 @@ const LandingPage: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("https://api.escuelajs.co/api/v1/products");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}products`);
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
@@ -59,7 +59,7 @@ const LandingPage: React.FC = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await fetch("https://api.escuelajs.co/api/v1/categories");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}categories`);
         if (!response.ok) {
           throw new Error("Failed to fetch categories");
         }

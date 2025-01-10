@@ -19,7 +19,7 @@ const ProductDetail: React.FC = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/products/${id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}products/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP Error: ${response.status}`);
         }
