@@ -9,8 +9,9 @@ ShopSmart allows users to explore a variety of products, filter by categories, a
 
 To log-in to the account use:
 
-```Email : sutrisno@mail.com
-   Password: qwerty``` 
+Email : sutrisno@mail.com
+Password: qwerty
+ 
 
 ## Features Implemented
 - **Product Listing and Filtering**: Users can view products and filter them by categories and price range.
