@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 
 // Declare apiUrl at the top of the file
 const apiUrl = import.meta.env.VITE_API_URL;
-console.log("API URL:", apiUrl);
 
+// Define interface for form data
 interface FormData {
   name: string;
   email: string;
@@ -13,6 +13,7 @@ interface FormData {
   dob: string;
 }
 
+// Define interface for form errors
 interface FormErrors {
   name?: string;
   email?: string;
@@ -24,6 +25,7 @@ interface FormErrors {
 }
 
 const Register = () => {
+  // State for managing form data
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -37,6 +39,7 @@ const Register = () => {
     role: string;
   }
 
+  // State for dynamic role selection
   const [roles, setRoles] = useState<string[]>(["Customer", "Admin"]); // Default roles
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState<boolean>(false);
@@ -52,7 +55,7 @@ const Register = () => {
 
         const users: User[] = await response.json();
         const rolesData = [...new Set(users.map((user) => user.role))];
-        console.log("Fetched roles:", rolesData); // Log roles here
+        
         setRoles(rolesData);
       } catch (error) {
         console.error("Error fetching roles:", error);
@@ -62,6 +65,7 @@ const Register = () => {
     fetchRoles();
   }, []);
 
+  // Handle input field changes
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -70,6 +74,7 @@ const Register = () => {
     }));
   };
 
+// Validate form inputs
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
@@ -95,15 +100,9 @@ const Register = () => {
       return;
     }
 
-    // Log the payload before sending the request
-  // Log the payload before sending
-  console.log("Payload being sent:", {
-    name: formData.name,
-    email: formData.email,
-    password: formData.password,
-    avatar: "https://via.placeholder.com/150",
-  });
-
+    
+ 
+    // Show loading indicator
     setLoading(true);
     try {
       const response = await fetch(`${apiUrl}users/`, {
@@ -153,7 +152,7 @@ const Register = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-2xl font-bold text-center text-black">
           Create your account
         </h2>
       </div>
@@ -273,7 +272,8 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                className={`w-full bg-urbanChic-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-urbanChic-900 focus:outline-none"
+          > ${
                   loading ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
                 } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
               >

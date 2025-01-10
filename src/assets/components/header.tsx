@@ -17,14 +17,12 @@ const Header: React.FC = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (!isAuthenticated) {
-        console.log("Skipping user profile fetch: User is not authenticated.");
         return;
       }
 
       try {
         const response = await fetchWithAuth("auth/profile"); // Fetch profile data using the authenticated request
         const data = await response.json();
-        console.log("User Profile Data:", data);
         setUserProfile(data); // Store the fetched user profile
       } catch (error) {
         console.error("Error fetching user profile:", error); // Log any errors during the fetch

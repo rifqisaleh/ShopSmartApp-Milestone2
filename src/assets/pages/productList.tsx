@@ -134,30 +134,62 @@ const ProductList: React.FC = () => {
       .includes(filters.searchQuery.toLowerCase());
     const withinPriceRange =
       product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1];
-
+  
     return matchesSearchQuery && withinPriceRange;
   });
 
   return (
-    <div>
-      {error && <p className="text-red-500">{error}</p>}
-      <CategoryFilter
-        categories={categories} // Pass standardized categories
-        onFilterChange={({ categoryId, searchQuery, priceRange }) => {
-          console.log("Filters updated:", { categoryId, searchQuery, priceRange }); // Debug log
-          setFilters((prevFilters) => ({
-            ...prevFilters,
-            categoryId,
-            searchQuery,
-            priceRange,
-          }));
-        }}
-      />
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {displayedProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+    <div className="flex p-4 space-x-4">
+      {/* Filters Section */}
+      <div className="w-1/4 space-y-6">
+        {/* Search Bar */}
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={filters.searchQuery}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, searchQuery: e.target.value }))
+          }
+          className="w-full p-2 border rounded-md"
+        />
+
+        {/* Category Filter */}
+        <CategoryFilter
+          categories={categories}
+          onFilterChange={(updatedFilters) =>
+            setFilters((prev) => ({ ...prev, ...updatedFilters }))
+          }
+        />
+
+        {/* Price Range */}
+        <div>
+          <label className="block mb-2 text-sm font-medium text-gray-700">
+            Price Range: ${filters.priceRange[0]} - ${filters.priceRange[1]}
+          </label>
+          <input
+            type="range"
+            min="0"
+            max="500"
+            step="10"
+            value={filters.priceRange[1]}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                priceRange: [filters.priceRange[0], Number(e.target.value)],
+              }))
+            }
+            className="w-full"
+          />
+        </div>
       </div>
+
+      {/* Products Section */}
+      <div className="w-3/4 grid grid-cols-3 gap-4">
+  {error && <p className="text-red-500">{error}</p>}
+  {displayedProducts.map((product) => (
+    <ProductCard key={product.id} product={product} />
+  ))}
+</div>
     </div>
   );
 };
