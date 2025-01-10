@@ -7,6 +7,11 @@ ShopSmart is an online store application built using React and TypeScript, desig
 ## Overview of the Application
 ShopSmart allows users to explore a variety of products, filter by categories, and add items to their shopping cart. Users can log in to manage their accounts, while the shopping cart is accessible to both logged-in and non-logged-in users. The app is designed to be intuitive and responsive, ensuring ease of use across devices.
 
+To log-in to the account use:
+
+```Email : sutrisno@mail.com
+   Password: qwerty``` 
+
 ## Features Implemented
 - **Product Listing and Filtering**: Users can view products and filter them by categories and price range.
 - **Landing Page**: Highlights featured products and categories.
@@ -39,20 +44,6 @@ ShopSmart allows users to explore a variety of products, filter by categories, a
 - **Routing**: React Router
 - **State Management**: React Context API
 - **Icon**: Font Awesome
-
-## Screenshots
-
-### Landing Page
-![Landing Page](https://via.placeholder.com/800x400.png?text=Landing+Page)
-
-### Product Listing
-![Product Listing](https://via.placeholder.com/800x400.png?text=Product+Listing)
-
-### Shopping Cart
-![Shopping Cart](https://via.placeholder.com/800x400.png?text=Shopping+Cart)
-
-### Login Page
-![Login Page](https://via.placeholder.com/800x400.png?text=Login+Page)
 
 ## Project Structure
 ```
