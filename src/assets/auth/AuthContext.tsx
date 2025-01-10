@@ -53,7 +53,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
     const token = localStorage.getItem("token");
-    if (!token) throw new Error("No token available. Please log in.");
+    if (!token) {
+      console.error("No token available.");
+      throw new Error("No token available. Please log in.");
+    }
   
     const headers = {
       ...options.headers,
@@ -64,13 +67,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const response = await fetch(url, { ...options, headers });
   
     if (!response.ok) {
-      const errorResponse = await response.json(); // Log detailed error
+      if (response.status === 401) {
+        console.error("Unauthorized: Token might be invalid.");
+        // Optionally clear the token and log out
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+      }
+  
+      const errorResponse = await response.json();
       console.error("API Error Response:", errorResponse);
       throw new Error(errorResponse.message || "Failed to fetch");
     }
   
     return response;
   };
+  
   return (
     <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, fetchWithAuth }}>
       {children}

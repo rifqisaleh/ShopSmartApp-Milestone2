@@ -14,20 +14,21 @@ const Header: React.FC = () => {
 
   // Fetch cart data example (adjust URL as needed)
   React.useEffect(() => {
-    const fetchCartData = async () => {
+    const fetchUserProfile = async () => {
       try {
-        const response = await fetchWithAuth("https://api.escuelajs.co/api/v1/users");
-        const data = await response.json();
-        console.log("Fetched cart data:", data);
+        const response = await fetchWithAuth("https://api.escuelajs.co/api/v1/users/me");
+        const userData = await response.json();
+        console.log("User Profile Data:", userData);
       } catch (error) {
-        console.error("Error fetching cart data:", error);
+        console.error("Error fetching user profile:", error);
       }
     };
-
+  
     if (!isLoading && cartContext) {
-      fetchCartData();
+      fetchUserProfile();
     }
   }, [isLoading, cartContext, fetchWithAuth]);
+  
 
   if (isLoading) {
     return null; // Prevent rendering while loading
