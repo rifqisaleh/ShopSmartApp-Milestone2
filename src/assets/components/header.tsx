@@ -86,9 +86,9 @@ const Header: React.FC = () => {
           </ul>
         </nav>
       </div>
-      
+
       {/* Logo */}
-      <div className="text-xl font-bold">
+      <div className="text-3xl font-bold">
         <Link to="/" className="mb-4 text-black hover:underline">
           ShopSmart
         </Link>
@@ -102,7 +102,7 @@ const Header: React.FC = () => {
             {userProfile && <span className="text-black">Hello, {userProfile.name}</span>}
             <button
               onClick={() => navigate("/dashboard")}
-              className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600 focus:outline-none"
+              className="bg-urbanChic-50 px-4 py-8 rounded hover:bg-urbanChic-500 focus:outline-none"
             >
               Dashboard
             </button>
@@ -110,7 +110,7 @@ const Header: React.FC = () => {
         ) : (
           <button
             onClick={() => navigate("/login")}
-            className="bg-green-500 px-4 py-2 rounded hover:bg-green-600 focus:outline-none"
+            className="bg-urbanChic-50 px-4 py-8 rounded hover:bg-urbanChic-500 focus:outline-none"
           >
             Log In
           </button>
