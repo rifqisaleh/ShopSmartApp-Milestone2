@@ -37,31 +37,32 @@ const Login = () => {
         throw new Error(errorResponse.message || "Invalid credentials. Please try again.");
       }
   
+  
       const data = await response.json();
-      console.log("Token Received:", data.access_token);
-  
-      // Call login to store the token
-      console.log("Calling login function with token:", data.access_token);
-      login(data.access_token);
-  
-      // Validate the token by making a test authenticated request
-      const validationResponse = await fetch("https://api.escuelajs.co/api/v1/users/me", {
-        headers: {
-          Authorization: `Bearer ${data.access_token}`,
-        },
-      });
-  
-      if (!validationResponse.ok) {
-        throw new Error("Token validation failed.");
-      }
-  
-      console.log("Token validated successfully.");
-      navigate("/dashboard");
-    } catch (err) {
-      console.error("Login failed:", err);
-      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
+    console.log("Token Received:", data.access_token);
+
+    // Validate the token by making a test authenticated request
+    const validationResponse = await fetch("https://api.escuelajs.co/api/v1/auth/profile", {
+      headers: {
+        Authorization: `Bearer ${data.access_token}`,
+      },
+    });
+
+    if (!validationResponse.ok) {
+      throw new Error("Token validation failed.");
     }
-  };
+
+    console.log("Token validated successfully.");
+
+    // Call login only after validation succeeds
+    console.log("Calling login function with token:", data.access_token);
+    login(data.access_token);
+    navigate("/dashboard");
+  } catch (err) {
+    console.error("Login failed:", err);
+    setError(err instanceof Error ? err.message : "An unexpected error occurred.");
+  }
+};
 
 
   return (

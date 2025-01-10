@@ -13,8 +13,12 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 const isTokenValid = (token: string): boolean => {
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
+    if (!payload.sub) {
+      console.error("Token missing 'sub' claim:", payload);
+      return false;
+    }
     const isValid = payload.exp * 1000 > Date.now();
-    console.log("Token Validation:", { payload, isValid });
+    console.log("Token Validation Result:", { payload, isValid });
     return isValid;
   } catch (e) {
     console.error("Token Validation Error:", e);
@@ -54,29 +58,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      console.error("No token available.");
+      console.error("No token available in localStorage.");
       throw new Error("No token available. Please log in.");
     }
+  
+    const fullUrl = `${process.env.REACT_APP_API_URL || "https://api.escuelajs.co/api/v1/"}${url}`;
+    console.log("Making request to:", fullUrl);
   
     const headers = {
       ...options.headers,
       Authorization: `Bearer ${token}`,
     };
+    console.log("Request headers:", headers);
   
-    console.log("Making authenticated request:", { url, headers });
-    const response = await fetch(url, { ...options, headers });
-  
+    const response = await fetch(fullUrl, { ...options, headers });
     if (!response.ok) {
-      if (response.status === 401) {
-        console.error("Unauthorized: Token might be invalid.");
-        // Optionally clear the token and log out
-        localStorage.removeItem("token");
-        setIsAuthenticated(false);
-      }
-  
-      const errorResponse = await response.json();
-      console.error("API Error Response:", errorResponse);
-      throw new Error(errorResponse.message || "Failed to fetch");
+      const errorData = await response.json();
+      console.error("API Error Response:", errorData);
+      throw new Error(errorData.message || "Request failed");
     }
   
     return response;

@@ -16,7 +16,7 @@ const Header: React.FC = () => {
   React.useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetchWithAuth("https://api.escuelajs.co/api/v1/users/me");
+        const response = await fetchWithAuth("auth/profile");
         const userData = await response.json();
         console.log("User Profile Data:", userData);
       } catch (error) {
