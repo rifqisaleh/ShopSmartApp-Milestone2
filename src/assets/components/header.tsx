@@ -4,16 +4,16 @@ import { useAuth } from "../auth/AuthContext";
 import { CartContext } from "./cart";
 
 const Header: React.FC = () => {
-  const { isAuthenticated, isLoading, fetchWithAuth } = useAuth();
-  const navigate = useNavigate();
-  const cartContext = useContext(CartContext);
-  const [userProfile, setUserProfile] = useState<{ name: string; email: string } | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, isLoading, fetchWithAuth } = useAuth(); // Access authentication methods and state
+  const navigate = useNavigate(); // Allows navigation between routes
+  const cartContext = useContext(CartContext); // Access the shopping cart context
+  const [userProfile, setUserProfile] = useState<{ name: string; email: string } | null>(null); // Store the user's profile
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Manage the state of the hamburger menu
 
-  // Debugging Logs
-  console.log("Header: isAuthenticated =", isAuthenticated);
-  console.log("Header: Token in localStorage =", localStorage.getItem("token"));
+  // Toggle the hamburger menu state
+  const handleMenuToggle = () => setIsMenuOpen(!isMenuOpen);
 
+  // Fetch the user's profile when authenticated
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (!isAuthenticated) {
@@ -22,41 +22,43 @@ const Header: React.FC = () => {
       }
 
       try {
-        const response = await fetchWithAuth("auth/profile");
+        const response = await fetchWithAuth("auth/profile"); // Fetch profile data using the authenticated request
         const data = await response.json();
         console.log("User Profile Data:", data);
-        setUserProfile(data);
+        setUserProfile(data); // Store the fetched user profile
       } catch (error) {
-        console.error("Error fetching user profile:", error);
+        console.error("Error fetching user profile:", error); // Log any errors during the fetch
       }
     };
 
     fetchUserProfile();
   }, [isAuthenticated, fetchWithAuth]);
 
+  // Prevent rendering the header while loading
   if (isLoading) {
-    return null; // Prevent rendering while loading
+    return null;
   }
 
+  // Ensure the CartContext is available before rendering
   if (!cartContext) {
-    return null; // Ensure the header renders only when CartContext is available
+    return null;
   }
 
-  const { cartCount } = cartContext;
+  const { cartCount } = cartContext; // Get the cart item count from context
 
   return (
     <header className="bg-urbanChic-50 p-4 flex items-center justify-between">
       {/* Hamburger + Navigation Links */}
       <div className="flex items-center">
-        {/* Hamburger Button (Visible on Small Screens) */}
+        {/* Hamburger Button */}
         <button
           className="sm:hidden block text-black"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onClick={handleMenuToggle}
         >
           <span className="hamburger-icon text-2xl">☰</span>
         </button>
 
-        {/* Navigation Links (Visible on Larger Screens or when Hamburger is Open) */}
+        {/* Navigation Links */}
         <nav
           className={`${
             isMenuOpen ? "block" : "hidden"
@@ -83,13 +85,30 @@ const Header: React.FC = () => {
                 )}
               </Link>
             </li>
+            <li>
+              {isAuthenticated ? (
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="text-black hover:underline"
+                >
+                  DASHBOARD
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate("/login")}
+                  className="text-black hover:underline"
+                >
+                  LOGIN
+                </button>
+              )}
+            </li>
           </ul>
         </nav>
       </div>
 
       {/* Logo */}
       <div className="text-3xl font-bold">
-        <Link to="/" className="mb-4 text-black hover:underline">
+        <Link to="/" className="mb-4 text-black">
           ShopSmart
         </Link>
       </div>
@@ -97,23 +116,11 @@ const Header: React.FC = () => {
       {/* Authentication Links */}
       <div className="flex items-center space-x-4">
         {isAuthenticated ? (
-          <>
-            {/* Display user name */}
-            {userProfile && <span className="text-black">Hello, {userProfile.name}</span>}
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="bg-urbanChic-50 px-4 py-8 rounded hover:bg-urbanChic-500 focus:outline-none"
-            >
-              Dashboard
-            </button>
-          </>
+          <span className="text-black">
+            Welcome, <strong>{userProfile?.name || "User"}</strong> {/* Replace "User" with actual name from context */}
+          </span>
         ) : (
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-urbanChic-50 px-4 py-8 rounded hover:bg-urbanChic-500 focus:outline-none"
-          >
-            Log In
-          </button>
+          <span className="text-gray-500">Guest</span>
         )}
       </div>
     </header>
