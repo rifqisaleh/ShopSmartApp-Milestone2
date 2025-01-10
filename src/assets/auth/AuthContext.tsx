@@ -70,8 +70,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
     const fullUrl = `${import.meta.env.VITE_API_URL}${url}`;
     console.log("Making request to:", fullUrl, "with headers:", headers);
+    console.log("Request headers:", headers);
   
     const response = await fetch(fullUrl, { ...options, headers });
+    
     if (!response.ok) {
       const errorData = await response.json();
       console.error("API Error Response:", errorData);
