@@ -23,7 +23,7 @@ Password: qwerty
 ## Installation Instructions
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repository/shopSmart
+   git clone https://github.com/rifqisaleh/ShopSmartApp-Milestone2.git
    ```
 2. Navigate to the project directory:
    ```bash
