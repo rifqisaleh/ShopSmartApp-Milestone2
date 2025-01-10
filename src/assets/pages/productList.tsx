@@ -22,7 +22,7 @@ export const categoryMap: Record<string, string> = {
   "4": "Shoes",
   "5": "Misc",
 };
-
+//Product List, Category, filter and search bar state
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
@@ -35,8 +35,11 @@ const ProductList: React.FC = () => {
     searchQuery: "",
     priceRange: [0, 500],
   });
+
+  //Fetching error handler
   const [error, setError] = useState<string | null>(null);
 
+  // Normalize product images
   const normalizeImages = (images: string[] | string | null | undefined): string[] => {
     if (!images) return [];
     if (Array.isArray(images)) {
@@ -45,6 +48,7 @@ const ProductList: React.FC = () => {
     return [];
   };
 
+  //Fetch and category standardization
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -66,6 +70,7 @@ const ProductList: React.FC = () => {
               uniqueCategories: { id: string; name: string }[],
               category: { id: string; name: string }
             ) => {
+              
               // Ensure only one "Misc" category exists
               if (category.name === "Misc") {
                 if (!uniqueCategories.some((cat) => cat.name === "Misc")) {
@@ -79,6 +84,7 @@ const ProductList: React.FC = () => {
             [] as { id: string; name: string }[]
           );
 
+            //Update state with standardized category
         setCategories(standardizedCategories);
       } catch (err) {
         console.error("Error fetching categories:", err);
@@ -89,6 +95,8 @@ const ProductList: React.FC = () => {
     fetchCategories();
   }, []);
 
+
+  //Fetch and process products based on active filters
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -96,29 +104,26 @@ const ProductList: React.FC = () => {
         const url = filters.categoryId
           ? `${baseUrl}/?categoryId=${filters.categoryId}`
           : baseUrl;
-  
+
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }
-  
-        const data: Product[] = await response.json();
-        console.log("Fetched Products:", data); // Debugging log
 
+         // Normalize and process product data
+        const data: Product[] = await response.json();
         const processedProducts = data.map((product) => ({
           ...product,
           category: {
             ...product.category,
             id: product.category?.id || "5",
-            name: categoryMap[product.category?.id || "5"],
+            name: categoryMap[product.category?.id || "5"], // Standardize category names
           },
-          images: normalizeImages(product.images),
+          images: normalizeImages(product.images), // Normalize images
         }));
 
         setProducts(processedProducts);
         setError(null);
-      
-      
       } catch (err) {
         console.error("Error fetching products:", err);
         setError("Failed to load products. Please try again later.");
@@ -128,68 +133,38 @@ const ProductList: React.FC = () => {
     fetchProducts();
   }, [filters]);
 
+
+// Filter products based on search query and price range
   const displayedProducts = products.filter((product) => {
     const matchesSearchQuery = product.title
       .toLowerCase()
       .includes(filters.searchQuery.toLowerCase());
     const withinPriceRange =
       product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1];
-  
+
     return matchesSearchQuery && withinPriceRange;
   });
 
   return (
-    <div className="flex p-4 space-x-4">
+    <div className="flex flex-col lg:flex-row lg:space-x-4 p-4">
       {/* Filters Section */}
-      <div className="w-1/4 space-y-6">
-        {/* Search Bar */}
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={filters.searchQuery}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, searchQuery: e.target.value }))
-          }
-          className="w-full p-2 border rounded-md"
-        />
-
-        {/* Category Filter */}
+      <div className="lg:w-1/4 w-full space-y-6 mb-4 lg:mb-0">
         <CategoryFilter
-          categories={categories}
+          filters={filters} // Pass active filters
+          categories={categories} // Pass category data
           onFilterChange={(updatedFilters) =>
-            setFilters((prev) => ({ ...prev, ...updatedFilters }))
+            setFilters((prev) => ({ ...prev, ...updatedFilters })) // Update filters when changed
           }
         />
-
-        {/* Price Range */}
-        <div>
-          <label className="block mb-2 text-sm font-medium text-gray-700">
-            Price Range: ${filters.priceRange[0]} - ${filters.priceRange[1]}
-          </label>
-          <input
-            type="range"
-            min="0"
-            max="500"
-            step="10"
-            value={filters.priceRange[1]}
-            onChange={(e) =>
-              setFilters((prev) => ({
-                ...prev,
-                priceRange: [filters.priceRange[0], Number(e.target.value)],
-              }))
-            }
-            className="w-full"
-          />
-        </div>
       </div>
 
       {/* Products Section */}
-      <div className="w-3/4 grid grid-cols-3 gap-4">
-  {error && <p className="text-red-500">{error}</p>}
-  {displayedProducts.map((product) => (
-    <ProductCard key={product.id} product={product} />
-  ))}
-</div>
+      <div className="lg:w-3/4 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {error && <p className="text-red-500">{error}</p>} {/* Display error if present */}
+        {displayedProducts.map((product) => (
+          <ProductCard key={product.id} product={product} /> // Render each product card
+        ))}
+      </div>
     </div>
   );
 };

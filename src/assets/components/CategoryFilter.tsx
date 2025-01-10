@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 interface Category {
   id: string;
@@ -6,42 +6,21 @@ interface Category {
 }
 
 interface CategoryFilterProps {
-  categories: Category[];
-  onFilterChange: (filters: {
+  filters: {
     categoryId: string | null;
     searchQuery: string;
     priceRange: [number, number];
-  }) => void;
+  };
+  categories: Category[];
+  onFilterChange: (updatedFilters: Partial<CategoryFilterProps["filters"]>) => void;
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
+  filters,
   categories,
   onFilterChange,
-}) => { console.log("CategoryFilter rendered");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
-
-  const handleCategoryChange = (categoryId: string | null) => {
-    setSelectedCategory(categoryId);
-    const filters = { categoryId, searchQuery, priceRange };
-    console.log("Filters changed:", filters); // Debugging
-    onFilterChange(filters);
-  };
-
-  const handleSearchQueryChange = (query: string) => {
-    setSearchQuery(query);
-    const filters = { categoryId: selectedCategory, searchQuery: query, priceRange };
-    console.log("Filters changed:", filters); // Debugging
-    onFilterChange(filters);
-  };
-
-  const handlePriceRangeChange = (newRange: [number, number]) => {
-    setPriceRange(newRange);
-    const filters = { categoryId: selectedCategory, searchQuery, priceRange: newRange };
-    console.log("Filters changed:", filters); // Debugging
-    onFilterChange(filters);
-  };
+}) => {
+  const { categoryId, searchQuery, priceRange } = filters;
 
   return (
     <div className="space-y-4">
@@ -51,31 +30,30 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           type="text"
           placeholder="Search products..."
           value={searchQuery}
-          onChange={(e) => handleSearchQueryChange(e.target.value)}
+          onChange={(e) => onFilterChange({ searchQuery: e.target.value })}
           className="w-full px-4 py-2 border rounded-md"
         />
       </div>
 
       {/* Category Buttons */}
-      <div className="flex flex-wrap space-x-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <button
-          className={`px-4 py-2 rounded ${
-            !selectedCategory ? "bg-blue-500 text-white" : "bg-gray-200"
+          className={`px-3 py-2 rounded text-center ${
+            !categoryId ? "bg-urbanChic-500 text-white" : "bg-urbanChic-200"
           }`}
-          onClick={() => handleCategoryChange(null)}
+          onClick={() => onFilterChange({ categoryId: null })}
         >
           All
         </button>
-
         {categories.map((category) => (
           <button
             key={category.id}
-            className={`px-4 py-2 rounded ${
-              selectedCategory === category.id
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200"
+            className={`px-3 py-2 rounded text-center ${
+              categoryId === category.id
+                ? "bg-urbanChic-500 text-white"
+                : "bg-urbanChic-200"
             }`}
-            onClick={() => handleCategoryChange(category.id)}
+            onClick={() => onFilterChange({ categoryId: category.id })}
           >
             {category.name}
           </button>
@@ -94,9 +72,11 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           step="10"
           value={priceRange[1]}
           onChange={(e) =>
-            handlePriceRangeChange([priceRange[0], Number(e.target.value)])
+            onFilterChange({
+              priceRange: [priceRange[0], Number(e.target.value)],
+            })
           }
-          className="w-full"
+          className="w-full appearance-none h-2 bg-urbanChic-100 rounded-md"
         />
       </div>
     </div>
