@@ -49,23 +49,25 @@ const ProductDetail: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 mt-32 mb-56">
+      <h1 className="text-4xl text-urbanChic-600 mb-16 text-center">{product.title}</h1>
       <img
         src={product.images?.[0] || "https://via.placeholder.com/150"}
         alt={product.title}
-        className="w-full max-w-md mx-auto mb-4"
+        className="w-full max-w-md mx-auto mb-16"
       />
-      <h1 className="text-2xl font-bold mb-2">{product.title}</h1>
-      <p className="text-gray-600 mb-4">{product.description}</p>
-      <p className="text-lg font-semibold mb-4">
+      <p className="text-gray-600 mb-8 text-center italic text-xl">{product.description}</p>
+      <p className="text-2xl font-semibold mb-24 mt-24 text-center">
         {product.price ? `$${product.price.toFixed(2)}` : "Price unavailable"}
       </p>
+      <div className="flex justify-center ">
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="bg-urbanChic-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-urbanChic-900 focus:outline-none"
         onClick={handleAddToCart}
       >
         Add to Cart
       </button>
+      </div>
     </div>
   );
 };

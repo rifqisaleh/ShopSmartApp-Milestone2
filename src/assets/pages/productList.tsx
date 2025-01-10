@@ -146,7 +146,7 @@ const ProductList: React.FC = () => {
   });
 
   return (
-    <div className="flex flex-col lg:flex-row lg:space-x-4 p-4">
+    <div className="flex flex-col lg:flex-row lg:space-x-4 p-4 mb-16 mt-16">
       {/* Filters Section */}
       <div className="lg:w-1/4 w-full space-y-6 mb-4 lg:mb-0">
         <CategoryFilter

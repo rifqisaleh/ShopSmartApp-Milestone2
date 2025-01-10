@@ -64,12 +64,12 @@ const Header: React.FC = () => {
         >
           <ul className="space-y-4 sm:space-y-0 sm:flex sm:space-x-4">
             <li>
-              <Link to="/" className="text-black hover:underline">
+              <Link to="/" className="text-gray-700 hover:text-gray-900 transition duration-200">
                 HOME
               </Link>
             </li>
             <li>
-              <Link to="/shop" className="text-black hover:underline">
+              <Link to="/shop" className="text-gray-700 hover:text-gray-900 transition duration-200">
                 SHOP
               </Link>
             </li>
@@ -77,21 +77,21 @@ const Header: React.FC = () => {
               {isAuthenticated ? (
                 <button
                   onClick={() => navigate("/dashboard")}
-                  className="text-black hover:underline"
+                  className="text-gray-700 hover:text-gray-900 transition duration-200"
                 >
                   DASHBOARD
                 </button>
               ) : (
                 <button
                   onClick={() => navigate("/login")}
-                  className="text-black hover:underline"
+                  className="text-gray-700 hover:text-gray-900 transition duration-200"
                 >
                   LOGIN
                 </button>
               )}
             </li>
             <li>
-              <Link to="/cart" className="text-black hover:underline relative">
+              <Link to="/cart" className="text-gray-700 hover:text-gray-900 transition duration-200">
                 CART
                 {cartCount > 0 && (
                   <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
