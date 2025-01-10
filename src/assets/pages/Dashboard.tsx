@@ -10,100 +10,127 @@ interface UserProfile {
 }
 
 const Dashboard: React.FC = () => {
-  const { logout } = useAuth(); // Access logout from useAuth
+  const { logout } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  const isError = (err: unknown): err is Error => {
+    return err instanceof Error;
+  };
+
   useEffect(() => {
     const fetchProfile = async () => {
+      console.log("Starting to fetch user profile...");
       try {
-        const token = localStorage.getItem("access_token");
-        if (!token) {
-          throw new Error("Unauthorized");
-        }
+        const token = localStorage.getItem("token"); // Ensure consistency
+        console.log("Token retrieved from localStorage:", token);
+        if (!token) throw new Error("Unauthorized");
 
-        const response = await fetch(
-          "https://api.escuelajs.co/api/v1/auth/profile",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const requestUrl = `${import.meta.env.VITE_API_URL}auth/profile`;
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+        console.log("Request URL:", requestUrl);
+        console.log("Request Headers:", headers);
+
+        const response = await fetch(requestUrl, {
+          method: "GET",
+          headers,
+        });
+
+        console.log("Response Status:", response.status);
 
         if (!response.ok) {
-          throw new Error("Failed to fetch profile.");
+          const errorData = await response.json();
+          console.error("Response Error Data:", errorData);
+          throw new Error(errorData.message || "Failed to fetch profile.");
         }
 
         const data = await response.json();
-
-       
-
+        console.log("User Profile Data Retrieved:", data);
         setProfile(data);
       } catch (err) {
-        console.log("Login failed:", err); // Log the error
-        setError(err instanceof Error ? err.message : "Unexpected error.");
-        logout(); // Clear the token using useAuth
-        navigate("/login");
+        console.error("Error fetching profile:", err);
+
+        if (isError(err)) {
+          setError(err.message);
+          if (err.message === "Unauthorized") {
+            console.log("Unauthorized: Logging out and redirecting to login...");
+            logout();
+            navigate("/login");
+          }
+        } else {
+          setError("An unexpected error occurred.");
+        }
       }
     };
 
     fetchProfile();
   }, [logout, navigate]);
 
- 
-
   const handleLogout = () => {
-    logout(); // Call the logout function from useAuth
+    console.log("Logging out...");
+    logout();
     navigate("/login");
   };
 
   const handleDeleteAccount = async () => {
+    console.log("Starting account deletion process...");
     try {
       const confirmDelete = window.confirm(
         "Are you sure you want to delete your account? This action cannot be undone."
       );
 
-      if (!confirmDelete) return;
-
-      const token = localStorage.getItem("access_token");
-      if (!token) {
-        throw new Error("Unauthorized");
+      if (!confirmDelete) {
+        console.log("Account deletion canceled by the user.");
+        return;
       }
 
-      const response = await fetch("https://api.escuelajs.co/api/v1/users/me", {
+      const token = localStorage.getItem("token"); // Ensure consistency
+      console.log("Token retrieved for account deletion:", token);
+      if (!token) throw new Error("Unauthorized");
+
+      const requestUrl = `${import.meta.env.VITE_API_URL}auth/profile`;
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      console.log("Request URL for deletion:", requestUrl);
+      console.log("Request Headers for deletion:", headers);
+
+      const response = await fetch(requestUrl, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers,
       });
 
+      console.log("Response Status for Deletion:", response.status);
+
       if (!response.ok) {
-        throw new Error("Failed to delete the account.");
+        const errorData = await response.json();
+        console.error("Response Error Data for Deletion:", errorData);
+        throw new Error(errorData.message || "Failed to delete the account.");
       }
 
       alert("Your account has been deleted.");
-      logout(); // Log out the user after account deletion
-      navigate("/"); // Redirect to the home page
+      logout();
+      navigate("/");
     } catch (err) {
       console.error("Error deleting account:", err);
-      alert(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while deleting your account."
-      );
+      alert(err instanceof Error ? err.message : "Unexpected error.");
     }
   };
 
   if (error) {
+    console.error("Displaying error to the user:", error);
     return <p className="text-red-500">{error}</p>;
   }
 
   if (!profile) {
+    console.log("Profile is null. Displaying loading message...");
     return <p>Loading profile...</p>;
   }
+
+  console.log("Rendering dashboard with user profile:", profile);
 
   return (
     <div className="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -123,17 +150,13 @@ const Dashboard: React.FC = () => {
         <div className="mt-6 space-y-4">
           <button
             onClick={handleLogout}
-            className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg font-medium 
-                     hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 
-                     focus:ring-offset-1"
+            className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 focus:outline-none"
           >
             Log Out
           </button>
           <button
             onClick={handleDeleteAccount}
-            className="w-full px-4 py-2 bg-red-500 text-white rounded-lg font-medium 
-                     hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 
-                     focus:ring-offset-1"
+            className="w-full px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 focus:outline-none"
           >
             Delete Account
           </button>
