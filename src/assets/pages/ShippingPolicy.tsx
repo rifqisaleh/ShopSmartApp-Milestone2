@@ -2,7 +2,7 @@ import React from "react";
 
 const ShippingPolicy: React.FC = () => {
   return (
-    <div className="max-w-4xl mx-auto mt-52 mb-52 p-6 bg-gray-100 rounded-lg shadow-lg">
+    <div className="max-w-4xl mx-auto mt-52 mb-52 p-6 bg-gray-100 rounded-lg shadow-lg bg-urbanChic-100">
       <h1 className="text-2xl font-bold mb-4 text-center">Terms & Conditions</h1>
       <div className="space-y-4">
         <section>

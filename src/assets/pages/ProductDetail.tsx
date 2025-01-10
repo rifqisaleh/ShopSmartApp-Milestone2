@@ -44,12 +44,13 @@ const ProductDetail: React.FC = () => {
         id: product.id,
         title: product.title,
         price: product.price,
+        images: product.images,
       });
     }
   };
 
   return (
-    <div className="p-4 mt-32 mb-56">
+    <div className="bg-urbanChic-100 p-4 mt-32 mb-56">
       <h1 className="text-4xl text-urbanChic-600 mb-16 text-center">{product.title}</h1>
       <img
         src={product.images?.[0] || "https://via.placeholder.com/150"}

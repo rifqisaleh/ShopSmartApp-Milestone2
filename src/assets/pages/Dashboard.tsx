@@ -133,7 +133,7 @@ const Dashboard: React.FC = () => {
   console.log("Rendering dashboard with user profile:", profile);
 
   return (
-    <div className="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div className="bg-urbanChic-100 flex items-center justify-center min-h-screen">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold text-center text-blue-500">
           Welcome, {profile.name}!

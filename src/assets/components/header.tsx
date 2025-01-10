@@ -105,7 +105,7 @@ const Header: React.FC = () => {
       </div>
 
       {/* Logo */}
-      <div className="text-3xl font-bold">
+      <div className="text-3xl">
         <Link to="/" className="mb-4 text-black">
           ShopSmart
         </Link>
