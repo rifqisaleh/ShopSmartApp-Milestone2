@@ -2,9 +2,10 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 interface AuthContextProps {
   isAuthenticated: boolean;
-  isLoading: boolean; // New loading state
+  isLoading: boolean;
   login: (token: string) => void;
   logout: () => void;
+  fetchWithAuth: (url: string, options?: RequestInit) => Promise<Response>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -12,41 +13,61 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 const isTokenValid = (token: string): boolean => {
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.exp * 1000 > Date.now();
+    const isValid = payload.exp * 1000 > Date.now();
+    console.log("Token Validation:", { payload, isValid });
+    return isValid;
   } catch (e) {
+    console.error("Token Validation Error:", e);
     return false;
   }
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token && isTokenValid(token)) {
-      console.log("isAuthenticated: true (Token is valid)");
+      console.log("Token is valid, setting isAuthenticated to true:", token);
       setIsAuthenticated(true);
     } else {
-      console.log("isAuthenticated: false (Token is invalid or expired)");
+      console.log("Token is invalid or expired, clearing token.");
       localStorage.removeItem("token");
       setIsAuthenticated(false);
     }
-    setIsLoading(false); // Validation complete
+    setIsLoading(false);
   }, []);
 
   const login = (token: string) => {
-    console.log("Storing token in localStorage and setting isAuthenticated to true.");
+    console.log("Storing token and setting isAuthenticated to true:", token);
     localStorage.setItem("token", token);
     setIsAuthenticated(true);
   };
+
   const logout = () => {
+    console.log("Clearing token and setting isAuthenticated to false.");
     localStorage.removeItem("token");
     setIsAuthenticated(false);
   };
 
+  const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token available. Please log in.");
+    }
+
+    const headers = {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+    };
+
+    console.log("Making authenticated request:", { url, headers });
+    return fetch(url, { ...options, headers });
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, fetchWithAuth }}>
       {children}
     </AuthContext.Provider>
   );

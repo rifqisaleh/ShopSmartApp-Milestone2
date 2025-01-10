@@ -4,13 +4,30 @@ import { useAuth } from "../auth/AuthContext";
 import { CartContext } from "./cart";
 
 const Header: React.FC = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, fetchWithAuth } = useAuth(); // Combined destructuring
   const navigate = useNavigate();
   const cartContext = useContext(CartContext);
 
   // Debugging Logs
   console.log("Header: isAuthenticated =", isAuthenticated);
   console.log("Header: Token in localStorage =", localStorage.getItem("token"));
+
+  // Fetch cart data example (adjust URL as needed)
+  React.useEffect(() => {
+    const fetchCartData = async () => {
+      try {
+        const response = await fetchWithAuth("https://api.escuelajs.co/api/v1/users");
+        const data = await response.json();
+        console.log("Fetched cart data:", data);
+      } catch (error) {
+        console.error("Error fetching cart data:", error);
+      }
+    };
+
+    if (!isLoading && cartContext) {
+      fetchCartData();
+    }
+  }, [isLoading, cartContext, fetchWithAuth]);
 
   if (isLoading) {
     return null; // Prevent rendering while loading
@@ -21,7 +38,6 @@ const Header: React.FC = () => {
   }
 
   const { cartCount } = cartContext;
-
   return (
     <header className="bg-urbanChic-50 text-white p-4 flex justify-between items-center">
       {/* Navigation Links */}
