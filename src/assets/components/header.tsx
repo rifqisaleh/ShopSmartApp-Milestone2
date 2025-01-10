@@ -8,6 +8,7 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const cartContext = useContext(CartContext);
   const [userProfile, setUserProfile] = useState<{ name: string; email: string } | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Debugging Logs
   console.log("Header: isAuthenticated =", isAuthenticated);
@@ -44,33 +45,48 @@ const Header: React.FC = () => {
   const { cartCount } = cartContext;
 
   return (
-    <header className="bg-urbanChic-50 text-white p-4 flex justify-between items-center">
-      {/* Navigation Links */}
-      <nav>
-        <ul className="flex space-x-4">
-          <li>
-            <Link to="/" className="mb-4 text-black hover:underline">
-              HOME
-            </Link>
-          </li>
-          <li>
-            <Link to="/shop" className="mb-4 text-black hover:underline">
-              SHOP
-            </Link>
-          </li>
-          <li>
-            <Link to="/cart" className="mb-4 text-black hover:underline relative">
-              CART
-              {cartCount > 0 && (
-                <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-          </li>
-        </ul>
-      </nav>
+    <header className="bg-urbanChic-50 p-4 flex items-center justify-between">
+      {/* Hamburger + Navigation Links */}
+      <div className="flex items-center">
+        {/* Hamburger Button (Visible on Small Screens) */}
+        <button
+          className="sm:hidden block text-black"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <span className="hamburger-icon text-2xl">☰</span>
+        </button>
 
+        {/* Navigation Links (Visible on Larger Screens or when Hamburger is Open) */}
+        <nav
+          className={`${
+            isMenuOpen ? "block" : "hidden"
+          } absolute top-16 left-0 w-full bg-urbanChic-50 p-4 sm:static sm:flex sm:items-center sm:space-x-4 sm:w-auto`}
+        >
+          <ul className="space-y-4 sm:space-y-0 sm:flex sm:space-x-4">
+            <li>
+              <Link to="/" className="text-black hover:underline">
+                HOME
+              </Link>
+            </li>
+            <li>
+              <Link to="/shop" className="text-black hover:underline">
+                SHOP
+              </Link>
+            </li>
+            <li>
+              <Link to="/cart" className="text-black hover:underline relative">
+                CART
+                {cartCount > 0 && (
+                  <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
       {/* Logo */}
       <div className="text-xl font-bold">
         <Link to="/" className="mb-4 text-black hover:underline">
