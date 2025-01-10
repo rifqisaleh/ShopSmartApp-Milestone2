@@ -6,7 +6,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const {login} = useAuth();
+  const { login } = useAuth();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -19,10 +19,10 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
-  
+
     try {
       console.log("Login Payload:", formData);
-  
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}auth/login`, {
         method: "POST",
         headers: {
@@ -30,39 +30,34 @@ const Login = () => {
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("API Error Response:", errorResponse);
         throw new Error(errorResponse.message || "Invalid credentials.");
       }
-  
+
       const data = await response.json();
-      console.log("Token Received:", data.access_token);
-  
-      // Store both tokens
+      console.log("Token Received:", data);
+
+      // Store tokens and update authentication state
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("refreshToken", data.refresh_token);
-      login(data.access_token);
-  
-      console.log("Login successful.");
+      login(data.access_token, data.refresh_token);
+
+      console.log("Login successful. Navigating to dashboard...");
       navigate("/dashboard");
     } catch (err) {
       console.error("Login failed:", err);
       setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     }
   };
-  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-blue-500">
-          Welcome to ShopSmart
-        </h2>
-        <p className="text-sm text-gray-600 text-center mt-2">
-          Login to your account
-        </p>
+        <h2 className="text-2xl font-bold text-center text-blue-500">Welcome to ShopSmart</h2>
+        <p className="text-sm text-gray-600 text-center mt-2">Login to your account</p>
 
         {error && <p className="text-red-500 text-center mt-2">{error}</p>}
 
@@ -120,4 +115,3 @@ const Login = () => {
 };
 
 export default Login;
-
