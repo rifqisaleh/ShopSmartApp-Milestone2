@@ -109,13 +109,13 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-urbanChic-100 flex flex-col items-center p-6">
+    <div className="flex flex-col items-center p-6">
       {/* Welcome Section */}
-      <div className="bg-urbanChic-100 flex flex-col sm:flex-row items-center w-full max-w-7xl mt-16 mb-16">
+      <div className="flex flex-col sm:flex-row items-center w-full max-w-7xl mt-16 mb-16">
         {/* Left Section */}
         <div className="sm:w-1/2 p-4">
-          <h1 className="text-5xl font-bold mb-4 text-urbanChic-600">Welcome to ShopSmart!</h1>
-          <p className="text-lg text-gray-700">
+          <h1 className="text-6xl  mb-16 text-urbanChic-600">Welcome to ShopSmart!</h1>
+          <p className="text-2xl text-gray-700 italic">
             Discover amazing products from a variety of categories.
           </p>
         </div>
@@ -147,7 +147,7 @@ const LandingPage: React.FC = () => {
 
       {/* Category Section */}
       <div className="w-full max-w-7xl mt-16 mb-16">
-        <h2 className="text-4xl text-urbanChic-600 mb-16 text-center">Shop by Category</h2>
+        <h2 className="text-5xl text-urbanChic-600 mb-16 text-center">Shop by Category</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {categories.map((category) => (
             <div

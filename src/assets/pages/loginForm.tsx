@@ -51,9 +51,9 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-urbanChic-100">
-      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
-        <h2 className="mt-6 text-2xl font-bold text-center text-black">Welcome to ShopSmart</h2>
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="bg-urbanChic-100 shadow-lg rounded-xl p-8 w-full max-w-md">
+        <h2 className="mt-6 text-3xl text-center text-black">Welcome Back!</h2>
         <p className="text-sm text-gray-600 text-center mt-2">Login to your account</p>
 
         {error && <p className="text-red-500 text-center mt-2">{error}</p>} {/* Display errors */}

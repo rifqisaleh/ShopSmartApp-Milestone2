@@ -156,15 +156,17 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-urbanChic-100">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-2xl font-bold text-center text-black">
+    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="bg-urbanChic-100 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        {/* Add Welcome Heading */}
+        <h1 className="mt-6 text-3xl text-center text-black mb-16">
+          Welcome To ShopSmart!
+        </h1>
+        {/* Add Create Account Heading */}
+        <h2 className="mt-4 text-2xl text-center text-black mb-16">
           Create your account
         </h2>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -290,6 +292,7 @@ const Register = () => {
         </div>
       </div>
     </div>
+   
   );
 };
 

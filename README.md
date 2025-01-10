@@ -1,5 +1,7 @@
 # ShopSmart App
 
+Hello Everyone !
+
 ShopSmart is an online store application built using React and TypeScript, designed to provide users with a seamless shopping experience. The app integrates features such as product browsing, category filtering, a shopping cart, user authentication, and more. To access my deployed website, visit: [https://shopsmartappmrs.netlify.app/]
 
 ## Overview of the Application
@@ -89,6 +91,5 @@ shopSmart/
 ## Contributing
 Feel free to fork the repository and submit pull requests. Contributions are welcome!
 
-## License
-This project is licensed under the MIT License.
+
 

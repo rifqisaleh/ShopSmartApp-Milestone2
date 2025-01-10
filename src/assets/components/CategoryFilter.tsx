@@ -76,7 +76,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
               priceRange: [priceRange[0], Number(e.target.value)],
             })
           }
-          className="w-full appearance-none h-2 bg-urbanChic-100 rounded-md"
+          className="w-full appearance-none h-2 bg-urbanChic-500 rounded-md"
         />
       </div>
     </div>
