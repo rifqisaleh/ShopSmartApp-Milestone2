@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token && isTokenValid(token)) {
-      console.log("Token is valid, setting isAuthenticated to true:", token);
+      console.log("Token is valid, setting isAuthenticated to true.");
       setIsAuthenticated(true);
     } else {
       console.log("Token is invalid or expired, clearing token.");
@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     setIsLoading(false);
   }, []);
-
+  
   const login = (token: string) => {
     console.log("Storing token and setting isAuthenticated to true:", token);
     localStorage.setItem("token", token);
@@ -62,9 +62,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw new Error("No token available. Please log in.");
     }
   
-    const fullUrl = `${process.env.REACT_APP_API_URL || "https://api.escuelajs.co/api/v1/"}${url}`;
-    console.log("Making request to:", fullUrl);
-  
+    const fullUrl = `${import.meta.env.VITE_API_URL}${url}`;
+  console.log("Making request to:", fullUrl);
+
     const headers = {
       ...options.headers,
       Authorization: `Bearer ${token}`,

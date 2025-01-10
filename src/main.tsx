@@ -6,7 +6,8 @@ import { AuthProvider } from './assets/auth/AuthContext.tsx'; // Import the Auth
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-console.log("API URL:", process.env.REACT_APP_API_URL);
+console.log("Deployed API URL:", import.meta.env.VITE_API_URL);
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -4,7 +4,7 @@ import { useAuth } from "../auth/AuthContext";
 import { CartContext } from "./cart";
 
 const Header: React.FC = () => {
-  const { isAuthenticated, isLoading, fetchWithAuth } = useAuth(); // Combined destructuring
+  const { isAuthenticated, isLoading, fetchWithAuth } = useAuth();
   const navigate = useNavigate();
   const cartContext = useContext(CartContext);
 
@@ -12,7 +12,7 @@ const Header: React.FC = () => {
   console.log("Header: isAuthenticated =", isAuthenticated);
   console.log("Header: Token in localStorage =", localStorage.getItem("token"));
 
-  // Fetch cart data example (adjust URL as needed)
+  // Fetch user profile only if the user is authenticated
   React.useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -23,22 +23,30 @@ const Header: React.FC = () => {
         console.error("Error fetching user profile:", error);
       }
     };
-  
-    if (!isLoading && cartContext) {
-      fetchUserProfile();
-    }
-  }, [isLoading, cartContext, fetchWithAuth]);
-  
 
+    if (!isLoading && isAuthenticated) {
+      fetchUserProfile();
+    } else {
+      console.log("Skipping user profile fetch: User is not authenticated.");
+    }
+  }, [isLoading, isAuthenticated, fetchWithAuth]);
+
+  // Show a loading indicator while checking authentication state
   if (isLoading) {
-    return null; // Prevent rendering while loading
+    return (
+      <header className="bg-urbanChic-50 text-white p-4 flex justify-between items-center">
+        <div className="text-xl font-bold">Loading...</div>
+      </header>
+    );
   }
 
   if (!cartContext) {
-    return null; // Ensure the header renders only when CartContext is available
+    console.warn("CartContext is not available. Skipping header rendering.");
+    return null;
   }
 
   const { cartCount } = cartContext;
+
   return (
     <header className="bg-urbanChic-50 text-white p-4 flex justify-between items-center">
       {/* Navigation Links */}

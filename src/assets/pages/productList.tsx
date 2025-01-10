@@ -48,7 +48,7 @@ const ProductList: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("https://api.escuelajs.co/api/v1/categories");
+        const response = await fetch("/categories");
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }

@@ -19,7 +19,7 @@ const ProductDetail: React.FC = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`https://api.escuelajs.co/api/v1/products/${id}`);
+        const response = await fetch(`/products/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP Error: ${response.status}`);
         }
