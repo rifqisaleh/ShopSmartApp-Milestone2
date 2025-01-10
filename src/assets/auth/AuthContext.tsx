@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     setIsLoading(false);
   }, []);
-  
+
   const login = (token: string) => {
     console.log("Storing token and setting isAuthenticated to true:", token);
     localStorage.setItem("token", token);
@@ -56,22 +56,58 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token"); // Use const for immutable variables
     if (!token) {
-      console.error("No token available in localStorage.");
-      throw new Error("No token available. Please log in.");
+      throw new Error("No token available.");
     }
   
-    const fullUrl = `${import.meta.env.VITE_API_URL}${url}`;
-  console.log("Making request to:", fullUrl);
-
     const headers = {
       ...options.headers,
       Authorization: `Bearer ${token}`,
     };
-    console.log("Request headers:", headers);
+  
+    const fullUrl = `${import.meta.env.VITE_API_URL}${url}`;
+    console.log("Making request to:", fullUrl);
   
     const response = await fetch(fullUrl, { ...options, headers });
+  
+    if (response.status === 401) {
+      console.log("Access token expired. Attempting to refresh token...");
+  
+      // Get the refresh token
+      const refreshToken = localStorage.getItem("refreshToken"); // Use const here too
+      if (!refreshToken) {
+        throw new Error("No refresh token available.");
+      }
+  
+      // Refresh the token
+      const refreshResponse = await fetch(`${import.meta.env.VITE_API_URL}auth/refresh-token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+  
+      if (!refreshResponse.ok) {
+        throw new Error("Failed to refresh token.");
+      }
+  
+      const refreshData = await refreshResponse.json();
+      console.log("Token refreshed successfully:", refreshData);
+  
+      // Store the new tokens
+      localStorage.setItem("token", refreshData.access_token);
+      localStorage.setItem("refreshToken", refreshData.refresh_token);
+  
+      // Retry the original request with the new token
+      const retryHeaders = {
+        ...headers,
+        Authorization: `Bearer ${refreshData.access_token}`,
+      };
+      return fetch(fullUrl, { ...options, headers: retryHeaders });
+    }
+  
     if (!response.ok) {
       const errorData = await response.json();
       console.error("API Error Response:", errorData);
@@ -81,6 +117,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return response;
   };
   
+
   return (
     <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, fetchWithAuth }}>
       {children}
