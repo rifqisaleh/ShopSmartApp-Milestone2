@@ -6,11 +6,12 @@ import ProductList from "./assets/pages/productList";
 import ProductDetail from "./assets/pages/ProductDetail";
 import Dashboard from "./assets/pages/Dashboard"; // Import the Dashboard component
 import ProtectedRoute from "./assets/components/ProtectedRoute"; // Import the ProtectedRoute wrapper
-import ShoppingCart from "./assets/pages/shoppingCart";// Adjusted import path
+import ShoppingCart from "./assets/pages/shoppingCart"; // Adjusted import path
 import CartProvider from "./assets/components/cart";
 import { AuthProvider } from "./assets/auth/AuthContext";
 import LandingPage from "./assets/pages/LandingPages";
 import ShippingPolicy from "./assets/pages/ShippingPolicy";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,8 +21,8 @@ const router = createBrowserRouter([
       </Layout>
     ),
   },
-{
-  path: "/shop",
+  {
+    path: "/shop",
     element: (
       <Layout>
         <ProductList />
@@ -66,13 +67,15 @@ const router = createBrowserRouter([
     path: "/cart",
     element: (
       <Layout>
-        <ShoppingCart />
+        <ProtectedRoute>
+          <ShoppingCart />
+        </ProtectedRoute>
       </Layout>
     ),
   },
   {
     path: "/shipping-policy",
-    element:(
+    element: (
       <Layout>
         <ShippingPolicy />
       </Layout>
@@ -86,7 +89,6 @@ const router = createBrowserRouter([
       </Layout>
     ),
   },
-  
 ]);
 
 function App() {

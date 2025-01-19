@@ -4,59 +4,51 @@ import { useAuth } from "../auth/AuthContext";
 import { CartContext } from "./cart";
 
 const Header: React.FC = () => {
-  const { isAuthenticated, isLoading, fetchWithAuth } = useAuth(); // Access authentication methods and state
-  const navigate = useNavigate(); // Allows navigation between routes
-  const cartContext = useContext(CartContext); // Access the shopping cart context
-  const [userProfile, setUserProfile] = useState<{ name: string; email: string } | null>(null); // Store the user's profile
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Manage the state of the hamburger menu
+  const { isAuthenticated, isLoading, fetchWithAuth } = useAuth();
+  const navigate = useNavigate();
+  const cartContext = useContext(CartContext);
+  const [userProfile, setUserProfile] = useState<{ name: string; email: string } | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Toggle the hamburger menu state
   const handleMenuToggle = () => setIsMenuOpen(!isMenuOpen);
 
-  // Fetch the user's profile when authenticated
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!isAuthenticated) {
-        return;
-      }
+      if (!isAuthenticated) return;
 
       try {
-        const response = await fetchWithAuth("auth/profile"); // Fetch profile data using the authenticated request
+        const response = await fetchWithAuth("auth/profile");
         const data = await response.json();
-        setUserProfile(data); // Store the fetched user profile
+        setUserProfile(data);
       } catch (error) {
-        console.error("Error fetching user profile:", error); // Log any errors during the fetch
+        console.error("Error fetching user profile:", error);
       }
     };
 
     fetchUserProfile();
   }, [isAuthenticated, fetchWithAuth]);
 
-  // Prevent rendering the header while loading
-  if (isLoading) {
-    return null;
-  }
+  if (isLoading) return null;
+  if (!cartContext) return null;
 
-  // Ensure the CartContext is available before rendering
-  if (!cartContext) {
-    return null;
-  }
+  const { cartCount } = cartContext;
 
-  const { cartCount } = cartContext; // Get the cart item count from context
+  const handleCartClick = () => {
+    if (isAuthenticated) {
+      navigate("/cart");
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <header className="bg-urbanChic-50 p-4 flex items-center justify-between">
-      {/* Hamburger + Navigation Links */}
+      {/* Left Section: Hamburger Menu */}
       <div className="flex items-center">
-        {/* Hamburger Button */}
-        <button
-          className="sm:hidden block text-black"
-          onClick={handleMenuToggle}
-        >
+        <button className="sm:hidden block text-black" onClick={handleMenuToggle}>
           <span className="hamburger-icon text-2xl">☰</span>
         </button>
 
-        {/* Navigation Links */}
         <nav
           className={`${
             isMenuOpen ? "block" : "hidden"
@@ -74,51 +66,50 @@ const Header: React.FC = () => {
               </Link>
             </li>
             <li>
-              {isAuthenticated ? (
-                <button
-                  onClick={() => navigate("/dashboard")}
-                  className="text-gray-700 hover:text-gray-900 transition duration-200"
-                >
-                  DASHBOARD
-                </button>
-              ) : (
-                <button
-                  onClick={() => navigate("/login")}
-                  className="text-gray-700 hover:text-gray-900 transition duration-200"
-                >
-                  LOGIN
-                </button>
-              )}
-            </li>
-            <li>
-              <Link to="/cart" className="text-gray-700 hover:text-gray-900 transition duration-200">
+              <button
+                onClick={handleCartClick}
+                className="text-gray-700 hover:text-gray-900 transition duration-200"
+              >
                 CART
                 {cartCount > 0 && (
                   <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
                     {cartCount}
                   </span>
                 )}
-              </Link>
+              </button>
             </li>
           </ul>
         </nav>
       </div>
 
-      {/* Logo */}
+      {/* Center Section: Logo */}
       <div className="text-3xl">
         <Link to="/" className="mb-4 text-black">
           ShopSmart
         </Link>
       </div>
 
-      {/* Authentication Links */}
+      {/* Right Section: Authentication and Greeting */}
       <div className="flex items-center space-x-4">
         {isAuthenticated ? (
-          <span className="text-black">
-            Welcome, <strong>{userProfile?.name || "User"}</strong> {/* Replace "User" with actual name from context */}
-          </span>
+          <>
+            <span className="hidden sm:block text-black">
+              Welcome, <strong>{userProfile?.name || "User"}</strong>
+            </span>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="text-gray-700 hover:text-gray-900 transition duration-200"
+            >
+              DASHBOARD
+            </button>
+          </>
         ) : (
-          <span className="text-gray-500">Guest</span>
+          <button
+            onClick={() => navigate("/login")}
+            className="text-gray-700 hover:text-gray-900 transition duration-200"
+          >
+            LOGIN
+          </button>
         )}
       </div>
     </header>

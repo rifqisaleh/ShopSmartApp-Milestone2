@@ -1,8 +1,16 @@
 import React, { useContext } from "react";
 import { CartContext } from "../components/cart";
+import { useAuth } from "../auth/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const ShoppingCart: React.FC = () => {
+  const { isAuthenticated } = useAuth(); // Access authentication state
   const cartContext = useContext(CartContext);
+
+  // Redirect to login if the user is not authenticated
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   if (!cartContext) {
     return <div className="text-red-500">Error: Cart context is not available</div>;
@@ -32,52 +40,53 @@ const ShoppingCart: React.FC = () => {
               key={item.id}
               className="flex items-center justify-between bg-white p-4 rounded-lg shadow"
             >
-                {/* Item Number */}
-                <span className="text-lg font-bold">{index + 1}.</span>
+              {/* Item Number */}
+              <span className="text-lg font-bold">{index + 1}.</span>
 
-{/* Product Image */}
-<img
-  src={item.image}
-  alt={item.title}
-  className="w-16 h-16 rounded object-cover ml-10 mr-10"
-  onError={(e) => {
-    e.currentTarget.src = "https://via.placeholder.com/150"; // Fallback image
-  }}
-/>
-{/* Product Details */}
-<div className="flex-1">
-  <p className="text-lg font-semibold">{item.title}</p>
-  <p className="text-gray-600">${item.price.toFixed(2)}</p>
-</div>
+              {/* Product Image */}
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-16 h-16 rounded object-cover ml-10 mr-10"
+                onError={(e) => {
+                  e.currentTarget.src = "https://via.placeholder.com/150"; // Fallback image
+                }}
+              />
 
-{/* Quantity Input */}
-<input
-  type="number"
-  className="w-9 border rounded-md mr-16 text-center"
-  min="1"
-  value={item.quantity}
-  onChange={(e) =>
-    handleQuantityChange(item.id, parseInt(e.target.value, 10))
-  }
-/>
+              {/* Product Details */}
+              <div className="flex-1">
+                <p className="text-lg font-semibold">{item.title}</p>
+                <p className="text-gray-600">${item.price.toFixed(2)}</p>
+              </div>
 
-{/* Remove Button */}
-<button
-  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-  onClick={() => handleRemoveItem(item.id)}
->
-  Remove
-</button>
-</div>
-))}
-{/* Display the total */}
-<div className="text-right text-xl font-bold">
-Total: ${total.toFixed(2)}
-</div>
-</div>
-)}
-</div>
-);
+              {/* Quantity Input */}
+              <input
+                type="number"
+                className="w-9 border rounded-md mr-16 text-center"
+                min="1"
+                value={item.quantity}
+                onChange={(e) =>
+                  handleQuantityChange(item.id, parseInt(e.target.value, 10))
+                }
+              />
+
+              {/* Remove Button */}
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                onClick={() => handleRemoveItem(item.id)}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          {/* Display the total */}
+          <div className="text-right text-xl font-bold">
+            Total: ${total.toFixed(2)}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ShoppingCart;
